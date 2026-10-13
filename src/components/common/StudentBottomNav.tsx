@@ -34,17 +34,17 @@ export const StudentBottomNav: React.FC<StudentBottomNavProps> = ({
     {
       id: 'reading' as StudentTabType,
       label: 'Book Challenge',
-      shortLabel: 'Book Challenge',
+      shortLabel: 'Book',
       icon: BookOpen,
-      badge: '+10 Pts',
+      badge: '+10',
       badgeColor: 'bg-amber-400 text-amber-950 font-black',
     },
     {
       id: 'leaderboard' as StudentTabType,
       label: 'Leaderboard',
-      shortLabel: 'Ranking',
+      shortLabel: 'Rank',
       icon: Trophy,
-      badge: 'Rank',
+      badge: 'Pts',
       badgeColor: 'bg-amber-500 text-white',
     },
     {
@@ -60,7 +60,7 @@ export const StudentBottomNav: React.FC<StudentBottomNavProps> = ({
   return (
     <nav 
       aria-label="Student Navigation Bar" 
-      className="fixed bottom-3 left-0 right-0 z-40 px-3 sm:px-4 pointer-events-none transition-all duration-300"
+      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-0 right-0 z-40 px-2 sm:px-4 pointer-events-none transition-all duration-300"
     >
       <div className="max-w-xl mx-auto bg-white/95 dark:bg-[#0f1422]/95 backdrop-blur-2xl border-2 border-slate-200/90 dark:border-slate-800 shadow-2xl shadow-indigo-950/15 rounded-3xl p-1.5 pointer-events-auto flex items-center justify-around gap-1 ring-1 ring-black/5 dark:ring-white/5 transition-colors">
         {navItems.map((item) => {
@@ -88,7 +88,7 @@ export const StudentBottomNav: React.FC<StudentBottomNavProps> = ({
 
                 {item.badge && !isActive && (
                   <span
-                    className={`absolute -top-1.5 -right-3 text-[9px] px-1 py-0.2 rounded-full font-black leading-none ${item.badgeColor}`}
+                    className={`absolute -top-1.5 -right-2 text-[9px] px-1 py-0.2 rounded-full font-black leading-none ${item.badgeColor}`}
                   >
                     {item.badge}
                   </span>
@@ -100,11 +100,11 @@ export const StudentBottomNav: React.FC<StudentBottomNavProps> = ({
               </div>
 
               {/* Label */}
-              <span className={`text-[10px] sm:text-xs tracking-tight transition-all truncate max-w-full ${
+              <span className={`text-[10px] sm:text-xs tracking-tight transition-all truncate max-w-full text-center ${
                 isActive ? 'text-white font-black' : 'text-slate-600 dark:text-slate-300'
               }`}>
-                <span className="hidden xs:inline">{item.label}</span>
-                <span className="xs:hidden">{item.shortLabel}</span>
+                <span className="hidden sm:inline">{item.label}</span>
+                <span className="sm:hidden">{item.shortLabel}</span>
               </span>
             </button>
           );

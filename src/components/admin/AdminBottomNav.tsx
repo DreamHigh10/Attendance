@@ -2,15 +2,16 @@ import React from 'react';
 import { 
   Radio, 
   CheckCircle2, 
-  BookOpen,
+  BookOpen, 
   Mail, 
   Users, 
   Settings,
   Sparkles,
-  Trophy
+  Trophy,
+  Globe
 } from 'lucide-react';
 
-export type AdminTabType = 'classes' | 'attendance' | 'books' | 'leaderboard' | 'emails' | 'roster' | 'cohorts';
+export type AdminTabType = 'classes' | 'attendance' | 'books' | 'leaderboard' | 'emails' | 'roster' | 'cohorts' | 'seo';
 
 interface AdminBottomNavProps {
   activeTab: AdminTabType;
@@ -73,6 +74,13 @@ export const AdminBottomNav: React.FC<AdminBottomNavProps> = ({
       badgeColor: 'bg-blue-600',
     },
     {
+      id: 'seo' as AdminTabType,
+      label: 'SEO',
+      icon: Globe,
+      badge: 'Live',
+      badgeColor: 'bg-emerald-500',
+    },
+    {
       id: 'cohorts' as AdminTabType,
       label: 'Config',
       icon: Settings,
@@ -80,8 +88,8 @@ export const AdminBottomNav: React.FC<AdminBottomNavProps> = ({
   ];
 
   return (
-    <nav aria-label="Admin Navigation" className="fixed bottom-3 left-0 right-0 z-50 px-4 pointer-events-none">
-      <div className="max-w-lg mx-auto bg-white/95 backdrop-blur-2xl border-2 border-slate-200/90 shadow-2xl rounded-3xl p-1.5 pointer-events-auto flex items-center justify-around gap-1 ring-1 ring-black/5">
+    <nav aria-label="Admin Navigation" className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-0 right-0 z-50 px-2 sm:px-4 pointer-events-none transition-all duration-300">
+      <div className="max-w-2xl mx-auto bg-white/95 dark:bg-[#0f1422]/95 backdrop-blur-2xl border-2 border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-3xl p-1 pointer-events-auto flex items-center justify-between gap-0.5 overflow-x-auto scrollbar-none ring-1 ring-black/5 dark:ring-white/5 transition-colors">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -90,31 +98,31 @@ export const AdminBottomNav: React.FC<AdminBottomNavProps> = ({
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all duration-200 cursor-pointer ${
+              className={`relative flex-1 min-w-[50px] sm:min-w-0 flex flex-col items-center justify-center py-1.5 sm:py-2 px-1 rounded-2xl transition-all duration-200 cursor-pointer ${
                 isActive
-                  ? 'bg-gradient-to-b from-indigo-50 to-indigo-100/70 text-indigo-700 font-black scale-[1.04] shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 font-bold'
+                  ? 'bg-gradient-to-b from-indigo-50 to-indigo-100/70 dark:from-indigo-950/80 dark:to-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-black scale-[1.03] shadow-xs'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-800/80 font-bold'
               }`}
             >
               {/* Icon Container with Badge */}
-              <div className="relative flex items-center justify-center mb-1">
-                <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110 text-indigo-600' : 'text-slate-500'}`} />
+              <div className="relative flex items-center justify-center mb-0.5 sm:mb-1">
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${isActive ? 'scale-110 text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`} />
                 
                 {item.badge && (
-                  <span className={`absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[9px] font-black text-white ${item.badgeColor} shadow-2xs leading-tight`}>
+                  <span className={`absolute -top-1.5 -right-2 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-black text-white ${item.badgeColor} shadow-2xs leading-tight`}>
                     {item.badge}
                   </span>
                 )}
               </div>
 
               {/* Text Label Below Icon */}
-              <span className={`text-[11px] tracking-tight leading-none ${isActive ? 'text-indigo-900 font-black' : 'text-slate-600 font-bold'}`}>
+              <span className={`text-[9px] sm:text-[11px] tracking-tight leading-none ${isActive ? 'text-indigo-900 dark:text-indigo-200 font-black' : 'text-slate-600 dark:text-slate-400 font-bold'}`}>
                 {item.label}
               </span>
 
               {/* Active Dot Indicator */}
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-1 shadow-xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400 mt-1 shadow-xs" />
               )}
             </button>
           );
