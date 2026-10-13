@@ -149,3 +149,16 @@ export interface BookAttendanceRecord {
   rating?: number; // 1 to 5
   markedAt: string;
 }
+
+export interface LoungeMessage {
+  id: string;
+  cohortId: string;
+  studentName: string; // The ONLY identifier publicly displayed in the chat
+  studentEmail?: string; // Kept internal for verification, never shown on message bubble
+  message: string;
+  channel?: string; // 'general' | 'projects' | 'insights' | 'help'
+  reactions?: Record<string, number>; // emoji -> count
+  userReactions?: Record<string, string[]>; // emoji -> array of user names
+  createdAt: string;
+  isFacilitator?: boolean;
+}

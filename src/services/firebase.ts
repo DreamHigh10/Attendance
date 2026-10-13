@@ -18,10 +18,12 @@ import {
   deleteDoc,
   writeBatch,
   query, 
-  where
+  where,
+  onSnapshot,
+  orderBy
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
-import { Student, ClassSession, AttendanceRecord, ImportedFileLog, Cohort, BookAssignment, BookAttendanceRecord } from '../types';
+import { Student, ClassSession, AttendanceRecord, ImportedFileLog, Cohort, BookAssignment, BookAttendanceRecord, LoungeMessage } from '../types';
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
@@ -382,6 +384,78 @@ export const firebaseDb = {
     } catch (err) {
       console.warn('Firebase fetch book attendance warning:', err);
       return [];
+    }
+  },
+
+  // --- Dreamers Lounge Real-Time Chat ---
+  async getLoungeMessagesFromFirestore(cohortId?: string): Promise<LoungeMessage[]> {
+    try {
+      const coll = collection(db, 'lounge_messages');
+      let q = query(coll, orderBy('createdAt', 'asc'));
+      if (cohortId) {
+        q = query(coll, where('cohortId', '==', cohortId), orderBy('createdAt', 'asc'));
+      }
+      const snapshot = await withTimeout(getDocs(q), 4000);
+      const messages: LoungeMessage[] = [];
+      snapshot.forEach(d => {
+        messages.push({ id: d.id, ...(d.data() as any) } as LoungeMessage);
+      });
+      return messages;
+    } catch (err) {
+      console.warn('Firebase fetch lounge messages warning:', err);
+      return [];
+    }
+  },
+
+  subscribeToLoungeMessages(
+    cohortId: string | undefined, 
+    callback: (messages: LoungeMessage[]) => void
+  ): () => void {
+    try {
+      const coll = collection(db, 'lounge_messages');
+      let q = query(coll, orderBy('createdAt', 'asc'));
+      if (cohortId) {
+        q = query(coll, where('cohortId', '==', cohortId), orderBy('createdAt', 'asc'));
+      }
+      return onSnapshot(
+        q,
+        (snapshot) => {
+          const list: LoungeMessage[] = [];
+          snapshot.forEach(d => {
+            list.push({ id: d.id, ...(d.data() as any) } as LoungeMessage);
+          });
+          callback(list);
+        },
+        (error) => {
+          console.warn('Firestore lounge realtime snapshot warning:', error);
+        }
+      );
+    } catch (err) {
+      console.warn('Firebase lounge listener initialization warning:', err);
+      return () => {};
+    }
+  },
+
+  async saveLoungeMessageToFirestore(message: LoungeMessage): Promise<void> {
+    try {
+      const docRef = doc(db, 'lounge_messages', message.id);
+      // Ensure email is stored internally if needed, but not exposed publicly
+      await withTimeout(setDoc(docRef, message, { merge: true }), 4000);
+    } catch (err) {
+      console.warn('Firebase save lounge message warning:', err);
+    }
+  },
+
+  async updateLoungeMessageReactionsInFirestore(
+    messageId: string, 
+    reactions: Record<string, number>,
+    userReactions: Record<string, string[]>
+  ): Promise<void> {
+    try {
+      const docRef = doc(db, 'lounge_messages', messageId);
+      await withTimeout(setDoc(docRef, { reactions, userReactions }, { merge: true }), 4000);
+    } catch (err) {
+      console.warn('Firebase update lounge reactions warning:', err);
     }
   }
 };

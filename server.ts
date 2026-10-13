@@ -173,6 +173,35 @@ const db = {
   importedFiles: [] as ImportedFileData[],
   books: [] as BookData[],
   bookAttendance: [] as BookAttendanceData[],
+  loungeMessages: [
+    {
+      id: 'lounge-msg-welcome',
+      cohortId: 'dtp-cohort-2',
+      studentName: 'Dream Team Facilitator',
+      studentEmail: 'facilitator@dreamteam.org',
+      message: 'Welcome to the Dreamers Lounge! 🚀 This is our private collaboration space for Cohort 2 innovators. Connect with your peers, share ideas, ask questions, and build greatness together.',
+      channel: 'general',
+      reactions: { '🔥': 8, '🚀': 12, '💡': 6 },
+      userReactions: {
+        '🔥': ['Kehinde Ogungbade', 'Adu Oluwaseyi'],
+        '🚀': ['Paul Stanley', 'Chiemela B.'],
+      },
+      createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+      isFacilitator: true,
+    },
+    {
+      id: 'lounge-msg-spark',
+      cohortId: 'dtp-cohort-2',
+      studentName: 'Kehinde Ogungbade',
+      studentEmail: 'ogungbadekehinde19@gmail.com',
+      message: 'Welcome everyone to Cohort 2! Remember: consistency is the bridge between ambition and mastery. Let\'s make every class and challenge count.',
+      channel: 'insights',
+      reactions: { '💡': 7, '👏': 9, '❤️': 5 },
+      userReactions: { '💡': ['Adu Oluwaseyi'] },
+      createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+      isFacilitator: true,
+    }
+  ] as any[],
 };
 
 // ---------------- API ROUTES ---------------- //
@@ -1069,6 +1098,123 @@ app.post('/api/books/attendance/mark', (req: Request, res: Response) => {
     record,
     message: `Attendance marked! You earned +10 Greatness points for reading "${book.title}".`,
   });
+});
+
+// Dreamers Lounge Chat Endpoints
+app.get('/api/lounge/messages', (req: Request, res: Response) => {
+  const { cohortId, email } = req.query;
+  const userEmail = (email || req.headers['x-user-email']) as string;
+
+  if (userEmail) {
+    const cleanEmail = String(userEmail).toLowerCase().trim();
+    const isAdmin = AUTHORIZED_ADMIN_EMAILS.some(e => e.toLowerCase() === cleanEmail);
+    const isStudent = db.students.some(s => s.email.toLowerCase() === cleanEmail && (!cohortId || s.cohortId === cohortId));
+    if (!isAdmin && !isStudent && db.students.length > 0) {
+      return res.status(403).json({ 
+        error: 'Access restricted: Only Dreamteam Admins and registered cohort members can view lounge messages.' 
+      });
+    }
+  }
+
+  let list = db.loungeMessages || [];
+  if (cohortId) {
+    list = list.filter((m: any) => !m.cohortId || m.cohortId === cohortId);
+  }
+  // Strip studentEmail from public output so only studentName is visible
+  const sanitized = list.map(({ studentEmail, ...rest }: any) => rest);
+  res.json({ success: true, messages: sanitized });
+});
+
+app.post('/api/lounge/verify-access', (req: Request, res: Response) => {
+  const { email, cohortId } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required.' });
+  const cleanEmail = String(email).toLowerCase().trim();
+  const isAdmin = AUTHORIZED_ADMIN_EMAILS.some(e => e.toLowerCase() === cleanEmail);
+  const student = db.students.find(s => s.email.toLowerCase() === cleanEmail && (!cohortId || s.cohortId === cohortId));
+
+  if (!student && !isAdmin) {
+    return res.status(403).json({
+      authorized: false,
+      error: 'Access restricted: This email is not registered in the cohort roster.'
+    });
+  }
+
+  res.json({
+    authorized: true,
+    studentName: student?.name || (isAdmin ? 'Cohort Facilitator' : 'Cohort Member'),
+    studentEmail: cleanEmail,
+    isFacilitator: isAdmin,
+  });
+});
+
+app.post('/api/lounge/messages', (req: Request, res: Response) => {
+  const { cohortId, studentEmail, studentName, message, channel } = req.body;
+  if (!message || String(message).trim().length === 0) {
+    return res.status(400).json({ error: 'Message cannot be empty.' });
+  }
+
+  const cleanEmail = studentEmail ? String(studentEmail).toLowerCase().trim() : '';
+  const isAdmin = cleanEmail && AUTHORIZED_ADMIN_EMAILS.some(e => e.toLowerCase() === cleanEmail);
+  const student = cleanEmail ? db.students.find(s => s.email.toLowerCase() === cleanEmail) : null;
+
+  // Gate enforcement: must be on roster or admin if email provided
+  if (cleanEmail && !student && !isAdmin) {
+    return res.status(403).json({ error: 'Only registered cohort members can post in the Dreamers Lounge.' });
+  }
+
+  const finalName = student?.name || studentName || (isAdmin ? 'Cohort Facilitator' : 'Cohort Member');
+
+  const newMsg = {
+    id: `lounge-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    cohortId: cohortId || 'dtp-cohort-2',
+    studentName: finalName, // Only name displayed publicly
+    studentEmail: cleanEmail,
+    message: String(message).trim(),
+    channel: channel || 'general',
+    reactions: {},
+    userReactions: {},
+    createdAt: new Date().toISOString(),
+    isFacilitator: Boolean(isAdmin),
+  };
+
+  if (!db.loungeMessages) db.loungeMessages = [];
+  db.loungeMessages.push(newMsg);
+
+  // Return public version without email
+  const { studentEmail: _, ...publicMsg } = newMsg;
+  res.json({ success: true, message: publicMsg });
+});
+
+app.post('/api/lounge/messages/:id/react', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { emoji, userName } = req.body;
+  if (!id || !emoji || !userName) {
+    return res.status(400).json({ error: 'Missing parameters.' });
+  }
+
+  const msg = (db.loungeMessages || []).find((m: any) => m.id === id);
+  if (!msg) return res.status(404).json({ error: 'Message not found.' });
+
+  if (!msg.reactions) msg.reactions = {};
+  if (!msg.userReactions) msg.userReactions = {};
+
+  const users = msg.userReactions[emoji] || [];
+  const hasReacted = users.includes(userName);
+
+  if (hasReacted) {
+    msg.userReactions[emoji] = users.filter((u: string) => u !== userName);
+    msg.reactions[emoji] = Math.max(0, (msg.reactions[emoji] || 1) - 1);
+    if (msg.reactions[emoji] === 0) {
+      delete msg.reactions[emoji];
+      delete msg.userReactions[emoji];
+    }
+  } else {
+    msg.userReactions[emoji] = [...users, userName];
+    msg.reactions[emoji] = (msg.reactions[emoji] || 0) + 1;
+  }
+
+  const { studentEmail: _, ...publicMsg } = msg;
+  res.json({ success: true, message: publicMsg });
 });
 
 async function startServer() {

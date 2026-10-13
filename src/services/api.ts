@@ -1,4 +1,4 @@
-import { Cohort, ClassSession, AttendanceRecord, Student, EmailCampaign, ClassVerificationResponse, StudentLookupResponse, ImportedFileLog, BookAssignment, BookAttendanceRecord } from '../types';
+import { Cohort, ClassSession, AttendanceRecord, Student, EmailCampaign, ClassVerificationResponse, StudentLookupResponse, ImportedFileLog, BookAssignment, BookAttendanceRecord, LoungeMessage } from '../types';
 import { persistentStore } from './storage';
 import { firebaseDb } from './firebase';
 
@@ -704,4 +704,60 @@ export const api = {
     }).catch(() => {});
     return result;
   },
+
+  // --- Dreamers Lounge Chat ---
+  async getLoungeMessages(cohortId?: string): Promise<LoungeMessage[]> {
+    try {
+      const fbMessages = await firebaseDb.getLoungeMessagesFromFirestore(cohortId);
+      if (fbMessages.length > 0) {
+        return fbMessages;
+      }
+    } catch (e) {
+      // fallback
+    }
+
+    const url = cohortId ? `/api/lounge/messages?cohortId=${cohortId}` : '/api/lounge/messages';
+    const { ok, data } = await safeFetchJson(url);
+    if (ok && Array.isArray(data?.messages)) {
+      return data.messages;
+    }
+
+    return persistentStore.getLoungeMessages(cohortId);
+  },
+
+  async sendLoungeMessage(payload: {
+    cohortId: string;
+    studentName: string;
+    studentEmail?: string;
+    message: string;
+    channel?: string;
+    isFacilitator?: boolean;
+  }): Promise<LoungeMessage> {
+    const newMsg = persistentStore.addLoungeMessage(payload);
+    firebaseDb.saveLoungeMessageToFirestore(newMsg).catch(() => {});
+    safeFetchJson('/api/lounge/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+    return newMsg;
+  },
+
+  async reactToLoungeMessage(messageId: string, emoji: string, userName: string): Promise<LoungeMessage | null> {
+    const updated = persistentStore.reactToLoungeMessage(messageId, emoji, userName);
+    if (updated) {
+      firebaseDb.updateLoungeMessageReactionsInFirestore(
+        messageId, 
+        updated.reactions || {}, 
+        updated.userReactions || {}
+      ).catch(() => {});
+      safeFetchJson(`/api/lounge/messages/${messageId}/react`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emoji, userName }),
+      }).catch(() => {});
+    }
+    return updated;
+  },
 };
+

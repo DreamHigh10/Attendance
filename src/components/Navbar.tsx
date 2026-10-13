@@ -11,6 +11,7 @@ import { Cohort } from '../types';
 import { DreamTeamLogo } from './common/DreamTeamLogo';
 import { isAuthorizedAdmin } from '../constants/admins';
 import { ThemeToggle } from './common/ThemeToggle';
+import { PWAInstallButton } from './common/PWAInstallButton';
 
 interface NavbarProps {
   currentView: 'student' | 'admin';
@@ -133,6 +134,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="hidden xs:inline">{isSigningIn ? 'Connecting...' : 'Google Login'}</span>
               </button>
             ) : null}
+
+            {/* PWA INSTALL BUTTON */}
+            <PWAInstallButton />
 
             {/* LIGHT & DARK MODE THEME TOGGLE */}
             <ThemeToggle />

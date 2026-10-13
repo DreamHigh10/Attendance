@@ -26,7 +26,8 @@ import {
   Trophy, 
   Flame, 
   HelpCircle,
-  BookOpen
+  BookOpen,
+  MessagesSquare
 } from 'lucide-react';
 import { api } from '../services/api';
 import { firebaseAuth } from '../services/firebase';
@@ -39,6 +40,8 @@ import { calculateGreatnessLeaderboard, LeaderboardUserEntry } from '../utils/le
 import { PointsBreakdownModal } from './common/PointsBreakdownModal';
 import { BookReadingAttendanceSection } from './books/BookReadingAttendanceSection';
 import { ExcellenceBanner } from './common/ExcellenceBanner';
+import { StudentBottomNav, StudentTabType } from './common/StudentBottomNav';
+import { DreamersLounge } from './lounge/DreamersLounge';
 
 interface StudentPortalProps {
   cohorts: Cohort[];
@@ -98,8 +101,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [portalAttendance, setPortalAttendance] = useState<AttendanceRecord[]>(allAttendanceRecords);
   const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
 
-  // App Interface Navigation Tab ('class' | 'reading' | 'leaderboard')
-  const [homeTab, setHomeTab] = useState<'class' | 'reading' | 'leaderboard'>('class');
+  // App Interface Navigation Tab ('class' | 'reading' | 'leaderboard' | 'lounge')
+  const [homeTab, setHomeTab] = useState<StudentTabType>('class');
 
   const activeClass = allCohortClasses.find(c => c.id === selectedClassId)
     || allCohortClasses.find(c => c.isAttendanceOpen && (!c.attendanceEndTime || Date.now() <= new Date(c.attendanceEndTime).getTime()))
@@ -336,7 +339,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const activeBook = books.find((b) => b.isActive) || books[0];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12 pb-32 sm:pb-36">
       
       {/* Radiant Top Hero Header with Logo */}
       <div className="text-center mb-6 sm:mb-8">
@@ -358,50 +361,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       {/* EXCELLENCE & INNOVATION INSPIRATION BANNER */}
       <ExcellenceBanner />
 
-      {/* APP INTERFACE NAVIGATION CONTROLS */}
-      <div className="bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs max-w-xl mx-auto mb-8 flex items-center justify-between gap-1.5 transition-colors">
-        <button
-          type="button"
-          onClick={() => setHomeTab('class')}
-          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
-            homeTab === 'class'
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
-          }`}
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          <span>Class Attendance</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setHomeTab('reading')}
-          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer relative ${
-            homeTab === 'reading'
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
-          }`}
-        >
-          <BookOpen className="w-4 h-4" />
-          <span>Reading Challenge</span>
-          <span className="hidden xs:inline-block px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-400 text-amber-950">
-            +10 Pts
-          </span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setHomeTab('leaderboard')}
-          className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
-            homeTab === 'leaderboard'
-              ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
-          }`}
-        >
-          <Trophy className="w-4 h-4 text-amber-500" />
-          <span>Leaderboard</span>
-        </button>
-      </div>
 
       {/* READING CHALLENGE TAB VIEW */}
       {homeTab === 'reading' && (
@@ -449,6 +408,22 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               handleLookupStudent(selectedEmail);
               setHomeTab('class');
               window.scrollTo({ top: 120, behavior: 'smooth' });
+            }}
+          />
+        </div>
+      )}
+
+      {/* DREAMERS LOUNGE CHAT TAB VIEW */}
+      {homeTab === 'lounge' && (
+        <div className="space-y-6 animate-fade-in">
+          <DreamersLounge
+            cohort={currentCohort}
+            currentEmail={emailInput || currentUser?.email || ''}
+            currentUser={currentUser}
+            registeredStudents={portalStudents}
+            onEmailVerified={(verified) => {
+              setEmailInput(verified);
+              handleLookupStudent(verified);
             }}
           />
         </div>
@@ -1022,11 +997,21 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       />
 
       {/* Cohort Help Footer */}
-      <div className="mt-10 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
+      <div className="mt-10 mb-8 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
         <p>
           Dream Team Project Cohort 2 &bull; Facilitated by Engr. Kehinde Ogungbade &amp; Team
         </p>
       </div>
+
+      {/* DOCKED APP BOTTOM NAVIGATION BAR (Icons on top, label below - stays pinned while scrolling) */}
+      <StudentBottomNav
+        activeTab={homeTab}
+        onTabChange={(tab) => {
+          setHomeTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        activeClassCount={activeClass ? 1 : 0}
+      />
 
     </div>
   );

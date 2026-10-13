@@ -1,4 +1,4 @@
-import { Cohort, ClassSession, AttendanceRecord, Student, EmailCampaign, ImportedFileLog, BookAssignment, BookAttendanceRecord } from '../types';
+import { Cohort, ClassSession, AttendanceRecord, Student, EmailCampaign, ImportedFileLog, BookAssignment, BookAttendanceRecord, LoungeMessage } from '../types';
 
 export const DEFAULT_55_STUDENTS: Student[] = [];
 
@@ -25,6 +25,34 @@ export const DEFAULT_BOOKS: BookAssignment[] = [];
 
 export const DEFAULT_BOOK_ATTENDANCE: BookAttendanceRecord[] = [];
 
+export const DEFAULT_LOUNGE_MESSAGES: LoungeMessage[] = [
+  {
+    id: 'lounge-msg-welcome',
+    cohortId: 'dtp-cohort-2',
+    studentName: 'Dream Team Facilitator',
+    message: 'Welcome to the Dreamers Lounge! 🚀 This is our private collaboration space for Cohort 2 innovators. Connect with your peers, share ideas, ask questions, and build greatness together.',
+    channel: 'general',
+    reactions: { '🔥': 8, '🚀': 12, '💡': 6 },
+    userReactions: {
+      '🔥': ['Kehinde Ogungbade', 'Adu Oluwaseyi'],
+      '🚀': ['Paul Stanley', 'Chiemela B.'],
+    },
+    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    isFacilitator: true,
+  },
+  {
+    id: 'lounge-msg-spark',
+    cohortId: 'dtp-cohort-2',
+    studentName: 'Kehinde Ogungbade',
+    message: 'Welcome everyone to Cohort 2! Remember: consistency is the bridge between ambition and mastery. Let\'s make every class and challenge count.',
+    channel: 'insights',
+    reactions: { '💡': 7, '👏': 9, '❤️': 5 },
+    userReactions: { '💡': ['Adu Oluwaseyi'] },
+    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+    isFacilitator: true,
+  }
+];
+
 interface PersistentSchema {
   cohorts: Cohort[];
   classes: ClassSession[];
@@ -34,6 +62,7 @@ interface PersistentSchema {
   importedFiles: ImportedFileLog[];
   books: BookAssignment[];
   bookAttendance: BookAttendanceRecord[];
+  loungeMessages: LoungeMessage[];
   version: number;
 }
 
@@ -77,6 +106,7 @@ export class PersistentDataStore {
           importedFiles: parsed.importedFiles || [],
           books: (parsed.books || []).filter((b: any) => b.id !== 'book-dtp-1' && !b.title?.toLowerCase().includes('atomic')),
           bookAttendance: (parsed.bookAttendance || []).filter((a: any) => a.bookId !== 'book-dtp-1'),
+          loungeMessages: parsed.loungeMessages?.length ? parsed.loungeMessages : DEFAULT_LOUNGE_MESSAGES,
           version: parsed.version || 6,
         };
       }
@@ -99,6 +129,7 @@ export class PersistentDataStore {
       importedFiles: [],
       books: DEFAULT_BOOKS,
       bookAttendance: [],
+      loungeMessages: DEFAULT_LOUNGE_MESSAGES,
       version: 6,
     };
   }
@@ -682,6 +713,73 @@ export class PersistentDataStore {
     this.data.campaigns.unshift(campaign);
     this.saveToStorage(this.data);
   }
+
+  // --- Dreamers Lounge Chat Methods ---
+  public getLoungeMessages(cohortId?: string): LoungeMessage[] {
+    const list = this.data.loungeMessages || DEFAULT_LOUNGE_MESSAGES;
+    if (cohortId) {
+      return list.filter(m => !m.cohortId || m.cohortId === cohortId);
+    }
+    return list;
+  }
+
+  public addLoungeMessage(payload: {
+    cohortId: string;
+    studentName: string;
+    studentEmail?: string;
+    message: string;
+    channel?: string;
+    isFacilitator?: boolean;
+  }): LoungeMessage {
+    if (!this.data.loungeMessages) {
+      this.data.loungeMessages = [...DEFAULT_LOUNGE_MESSAGES];
+    }
+    const newMessage: LoungeMessage = {
+      id: `lounge-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      cohortId: payload.cohortId || 'dtp-cohort-2',
+      studentName: payload.studentName, // Only name displayed publicly
+      studentEmail: payload.studentEmail,
+      message: payload.message.trim(),
+      channel: payload.channel || 'general',
+      reactions: {},
+      userReactions: {},
+      createdAt: new Date().toISOString(),
+      isFacilitator: payload.isFacilitator || false,
+    };
+    this.data.loungeMessages.push(newMessage);
+    this.saveToStorage(this.data);
+    return newMessage;
+  }
+
+  public reactToLoungeMessage(messageId: string, emoji: string, userName: string): LoungeMessage | null {
+    if (!this.data.loungeMessages) return null;
+    const msg = this.data.loungeMessages.find(m => m.id === messageId);
+    if (!msg) return null;
+
+    if (!msg.reactions) msg.reactions = {};
+    if (!msg.userReactions) msg.userReactions = {};
+
+    const users = msg.userReactions[emoji] || [];
+    const hasReacted = users.includes(userName);
+
+    if (hasReacted) {
+      // Toggle off
+      msg.userReactions[emoji] = users.filter(u => u !== userName);
+      msg.reactions[emoji] = Math.max(0, (msg.reactions[emoji] || 1) - 1);
+      if (msg.reactions[emoji] === 0) {
+        delete msg.reactions[emoji];
+        delete msg.userReactions[emoji];
+      }
+    } else {
+      // Toggle on
+      msg.userReactions[emoji] = [...users, userName];
+      msg.reactions[emoji] = (msg.reactions[emoji] || 0) + 1;
+    }
+
+    this.saveToStorage(this.data);
+    return msg;
+  }
 }
 
 export const persistentStore = PersistentDataStore.getInstance();
+
