@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { 
   Trophy, 
-  Award, 
-  Flame, 
-  HelpCircle, 
   Search, 
   CheckCircle2, 
   MessageSquare, 
   Zap, 
-  TrendingUp, 
-  BarChart3, 
-  User, 
   Medal,
-  ChevronRight,
   Sparkles,
-  Crown
+  Crown,
+  HelpCircle
 } from 'lucide-react';
 import { LeaderboardUserEntry } from '../../utils/leaderboard';
 import { PointsBreakdownModal } from '../common/PointsBreakdownModal';
@@ -64,27 +58,27 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
   const top3 = entries[2];
 
   return (
-    <div id="greatness-leaderboard" className="w-full bg-white border-2 border-slate-200/90 rounded-3xl p-5 sm:p-8 shadow-xl relative overflow-hidden backdrop-blur-md">
+    <div id="greatness-leaderboard" className="w-full bg-white dark:bg-[#0f1422] border-2 border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 sm:p-8 shadow-xl relative overflow-hidden backdrop-blur-md transition-colors">
       
       {/* Top Gradient Banner */}
       <div className="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-r from-amber-400 via-indigo-600 to-emerald-500" />
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
         <div className="flex items-start sm:items-center gap-3.5">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/25 flex-shrink-0">
             <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-800">
                 Official Leaderboard
               </span>
-              <span className="text-xs font-bold text-slate-500">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
                 {cohortName} Consistency Standings
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 mt-0.5">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 mt-0.5">
               <span>The Greatness Rank</span>
               <Sparkles className="w-5 h-5 text-amber-500 fill-amber-400" />
             </h2>
@@ -96,20 +90,20 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
           {/* How points are calculated button */}
           <button
             onClick={() => setIsPointsModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs font-bold transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
           >
-            <HelpCircle className="w-4 h-4 text-amber-600" />
+            <HelpCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>How Points Are Awarded?</span>
           </button>
 
           {/* Filter toggle */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
             <button
               onClick={() => setFilterMode('all')}
               className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
                 filterMode === 'all'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               All ({entries.length})
@@ -118,8 +112,8 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
               onClick={() => setFilterMode('top10')}
               className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
                 filterMode === 'top10'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Top 10
@@ -187,7 +181,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
         </div>
       )}
 
-      {/* TOP 3 PODIUM (Visible on desktop & tablet) */}
+      {/* TOP 3 PODIUM */}
       {entries.length >= 3 && !searchQuery && (
         <div className="my-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
           
@@ -195,15 +189,15 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
           {top2 && (
             <div 
               onClick={() => onSelectStudentEmail?.(top2.email)}
-              className="bg-slate-50 hover:bg-slate-100/80 border-2 border-slate-200 rounded-2xl p-4 text-center transition-all hover:scale-[1.01] cursor-pointer relative"
+              className="bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-center transition-all hover:scale-[1.01] cursor-pointer relative"
             >
-              <div className="w-9 h-9 rounded-full bg-slate-300 text-slate-800 font-black text-sm flex items-center justify-center mx-auto mb-2 shadow-xs">
+              <div className="w-9 h-9 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-black text-sm flex items-center justify-center mx-auto mb-2 shadow-xs">
                 #2
               </div>
-              <Medal className="w-6 h-6 text-slate-400 mx-auto mb-1" />
-              <p className="font-black text-slate-900 text-sm truncate">{top2.name}</p>
-              <p className="text-[11px] text-slate-500 truncate mb-2">{top2.email}</p>
-              <div className="inline-block px-3 py-1 rounded-full bg-slate-200/80 text-slate-800 text-xs font-black">
+              <Medal className="w-6 h-6 text-slate-400 dark:text-slate-500 mx-auto mb-1" />
+              <p className="font-black text-slate-900 dark:text-white text-sm truncate">{top2.name}</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mb-2">{top2.email}</p>
+              <div className="inline-block px-3 py-1 rounded-full bg-slate-200/80 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-black">
                 {top2.totalPoints} pts &bull; {top2.totalAttended} classes
               </div>
             </div>
@@ -213,14 +207,14 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
           {top1 && (
             <div 
               onClick={() => onSelectStudentEmail?.(top1.email)}
-              className="bg-gradient-to-b from-amber-50 to-amber-100/60 hover:from-amber-100 hover:to-amber-200/60 border-2 border-amber-300 rounded-2xl p-4 text-center transition-all hover:scale-[1.02] cursor-pointer relative shadow-md"
+              className="bg-gradient-to-b from-amber-50 to-amber-100/60 dark:from-amber-950/40 dark:to-amber-900/30 hover:from-amber-100 dark:hover:from-amber-950/60 border-2 border-amber-300 dark:border-amber-700 rounded-2xl p-4 text-center transition-all hover:scale-[1.02] cursor-pointer relative shadow-md"
             >
               <div className="w-10 h-10 rounded-full bg-amber-500 text-white font-black text-base flex items-center justify-center mx-auto mb-1 shadow-md shadow-amber-500/30">
                 #1
               </div>
               <Crown className="w-6 h-6 text-amber-500 mx-auto mb-1 fill-amber-400" />
-              <p className="font-black text-slate-900 text-base truncate">{top1.name}</p>
-              <p className="text-[11px] text-slate-600 truncate mb-2">{top1.email}</p>
+              <p className="font-black text-slate-900 dark:text-white text-base truncate">{top1.name}</p>
+              <p className="text-[11px] text-slate-600 dark:text-slate-300 truncate mb-2">{top1.email}</p>
               <div className="inline-block px-3.5 py-1.5 rounded-full bg-amber-500 text-white text-xs font-black shadow-xs">
                 {top1.totalPoints} pts &bull; {top1.totalAttended} classes
               </div>
@@ -231,15 +225,15 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
           {top3 && (
             <div 
               onClick={() => onSelectStudentEmail?.(top3.email)}
-              className="bg-amber-50/50 hover:bg-amber-100/50 border-2 border-amber-200/70 rounded-2xl p-4 text-center transition-all hover:scale-[1.01] cursor-pointer relative"
+              className="bg-amber-50/50 dark:bg-amber-950/30 hover:bg-amber-100/50 dark:hover:bg-amber-950/50 border-2 border-amber-200/70 dark:border-amber-800/60 rounded-2xl p-4 text-center transition-all hover:scale-[1.01] cursor-pointer relative"
             >
               <div className="w-9 h-9 rounded-full bg-amber-700 text-white font-black text-sm flex items-center justify-center mx-auto mb-2 shadow-xs">
                 #3
               </div>
-              <Medal className="w-6 h-6 text-amber-700 mx-auto mb-1" />
-              <p className="font-black text-slate-900 text-sm truncate">{top3.name}</p>
-              <p className="text-[11px] text-slate-500 truncate mb-2">{top3.email}</p>
-              <div className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black">
+              <Medal className="w-6 h-6 text-amber-700 dark:text-amber-500 mx-auto mb-1" />
+              <p className="font-black text-slate-900 dark:text-white text-sm truncate">{top3.name}</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mb-2">{top3.email}</p>
+              <div className="inline-block px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 text-xs font-black border border-amber-300 dark:border-amber-800">
                 {top3.totalPoints} pts &bull; {top3.totalAttended} classes
               </div>
             </div>
@@ -256,13 +250,13 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
             placeholder="Search leaderboard by name, email, or rank..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 pl-10"
+            className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 pl-10 transition-colors"
           />
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-3 text-xs font-bold text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-3 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               Clear
             </button>
@@ -271,10 +265,10 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
       </div>
 
       {/* LEADERBOARD TABLE WITH VISUAL BAR CHARTS */}
-      <div className="overflow-x-auto border border-slate-200 rounded-2xl">
+      <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50/90 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
+            <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
               <th className="py-3 px-3 sm:px-4 text-center w-14">Rank</th>
               <th className="py-3 px-3 sm:px-4">Member</th>
               <th className="py-3 px-3 sm:px-4 min-w-[200px]">Attendance Level &amp; Visual Chart</th>
@@ -282,10 +276,10 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
               <th className="py-3 px-3 sm:px-4 text-right">Total Points</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-700">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300">
             {displayEntries.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">
+                <td colSpan={5} className="py-8 text-center text-slate-500 dark:text-slate-400 text-sm">
                   No participants matched your search criteria.
                 </td>
               </tr>
@@ -312,10 +306,10 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                     onClick={() => onSelectStudentEmail?.(entry.email)}
                     className={`transition-colors cursor-pointer group ${
                       isCurrentUser
-                        ? 'bg-indigo-50/80 hover:bg-indigo-100/80 font-bold border-l-4 border-l-indigo-600'
+                        ? 'bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100/80 dark:hover:bg-indigo-900/60 font-bold border-l-4 border-l-indigo-600'
                         : entry.rank <= 3
-                        ? 'bg-amber-50/20 hover:bg-amber-50/50'
-                        : 'hover:bg-slate-50/80'
+                        ? 'bg-amber-50/20 dark:bg-amber-950/20 hover:bg-amber-50/50 dark:hover:bg-amber-900/30'
+                        : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/60'
                     }`}
                   >
                     {/* Rank Medal / Badge */}
@@ -325,7 +319,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                           🥇
                         </span>
                       ) : entry.rank === 2 ? (
-                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-300 text-slate-800 shadow-xs">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 shadow-xs">
                           🥈
                         </span>
                       ) : entry.rank === 3 ? (
@@ -333,7 +327,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                           🥉
                         </span>
                       ) : (
-                        <span className="text-slate-500 font-bold">
+                        <span className="text-slate-500 dark:text-slate-400 font-bold">
                           #{entry.rank}
                         </span>
                       )}
@@ -342,11 +336,11 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                     {/* Member Info */}
                     <td className="py-3 px-3 sm:px-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-black text-xs flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                           {entry.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-black text-slate-900 truncate flex items-center gap-1.5">
+                          <p className="font-black text-slate-900 dark:text-white truncate flex items-center gap-1.5">
                             <span>{entry.name}</span>
                             {isCurrentUser && (
                               <span className="text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white px-2 py-0.2 rounded-full">
@@ -354,7 +348,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                               </span>
                             )}
                           </p>
-                          <p className="text-[11px] text-slate-500 truncate">{entry.email}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{entry.email}</p>
                         </div>
                       </div>
                     </td>
@@ -363,16 +357,16 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                     <td className="py-3 px-3 sm:px-4">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-slate-600 font-bold">
+                          <span className="text-slate-600 dark:text-slate-300 font-bold">
                             {entry.totalAttended} of {entry.totalClasses} classes attended
                           </span>
-                          <span className="font-black text-emerald-600">
+                          <span className="font-black text-emerald-600 dark:text-emerald-400">
                             {entry.attendanceRate}%
                           </span>
                         </div>
                         
                         {/* Attendance Bar */}
-                        <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex shadow-inner">
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden flex shadow-inner">
                           <div
                             className={`h-full transition-all duration-500 rounded-full ${
                               entry.attendanceRate >= 80
@@ -386,7 +380,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                         </div>
 
                         {/* Relative Points Bar */}
-                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden flex">
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden flex">
                           <div
                             className="h-full bg-gradient-to-r from-violet-500 to-indigo-600 rounded-full transition-all duration-500"
                             style={{ width: `${pointsBarPercent}%` }}
@@ -400,19 +394,19 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                     <td className="py-3 px-3 sm:px-4 text-center">
                       <div className="inline-flex items-center gap-1 text-[10px]">
                         <span 
-                          className="px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200" 
+                          className="px-1.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" 
                           title={`${entry.totalAttended} classes attended x 10 pts = ${entry.attendancePoints} pts`}
                         >
                           {entry.attendancePoints}a
                         </span>
                         <span 
-                          className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          className="px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
                           title={`${entry.commentsCount} comments submitted x 5 pts = ${entry.commentPoints} pts`}
                         >
                           {entry.commentPoints}c
                         </span>
                         <span 
-                          className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200"
+                          className="px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
                           title={`${entry.speedBonusCount} speed bonuses = ${entry.speedPoints} pts`}
                         >
                           +{entry.speedPoints}s
@@ -423,10 +417,10 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
                     {/* Total Points */}
                     <td className="py-3 px-3 sm:px-4 text-right">
                       <div className="inline-block text-right">
-                        <span className="font-black text-slate-900 text-sm sm:text-base">
+                        <span className="font-black text-slate-900 dark:text-white text-sm sm:text-base">
                           {entry.totalPoints}
                         </span>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-bold">
                           pts
                         </span>
                       </div>
@@ -441,7 +435,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
       </div>
 
       {/* Legend Footer */}
-      <div className="mt-4 pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+      <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
@@ -459,7 +453,7 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
 
         <button
           onClick={() => setIsPointsModalOpen(true)}
-          className="text-indigo-600 hover:text-indigo-700 font-bold underline cursor-pointer text-xs"
+          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-bold underline cursor-pointer text-xs"
         >
           View detailed scoring rules popup &rarr;
         </button>

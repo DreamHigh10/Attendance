@@ -184,22 +184,22 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-800 p-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#080b12] flex flex-col items-center justify-center text-slate-800 dark:text-slate-100 p-4 transition-colors">
         {/* Architectural Background in loading */}
         <ArchitecturalBackground />
         
-        <div className="relative z-10 flex flex-col items-center justify-center bg-white/90 backdrop-blur-xl border border-slate-200/80 p-8 sm:p-10 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center bg-white/90 dark:bg-[#0f1422]/90 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800/80 p-8 sm:p-10 rounded-3xl shadow-2xl max-w-sm w-full text-center">
           {/* Authentic Dream Team Constellation Logo */}
           <div className="mb-5 flex justify-center">
             <DreamTeamLogo size="xl" showText={true} animated={true} />
           </div>
 
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mb-4">
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mb-4">
             <div className="h-full bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-500 rounded-full animate-pulse w-3/4 mx-auto" />
           </div>
 
-          <p className="text-xs sm:text-sm font-bold text-slate-700 flex items-center justify-center gap-2">
-            <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+          <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center justify-center gap-2">
+            <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-600 dark:text-indigo-400" />
             <span>Loading Attendance Hub &amp; Leaderboard...</span>
           </p>
         </div>
@@ -208,7 +208,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-600 selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#080b12] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-600 selection:text-white relative overflow-x-hidden transition-colors duration-200">
       
       {/* Moving Architectural Geometry Canvas Background */}
       <ArchitecturalBackground />
@@ -275,22 +275,22 @@ export default function App() {
       />
 
       {/* Modern Footer */}
-      <footer className="border-t border-slate-200/80 bg-white/70 backdrop-blur-md py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-[#0c101a]/70 backdrop-blur-md py-6 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-black text-slate-800">Dream Team Project</span>
-            <span className="text-slate-300">&bull;</span>
-            <span className="font-semibold text-slate-600">Cohort 2 Attendance &amp; AI Communication System</span>
+            <span className="font-black text-slate-800 dark:text-slate-200">Dream Team Project</span>
+            <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+            <span className="font-semibold text-slate-600 dark:text-slate-400">Cohort 2 Attendance &amp; AI Communication System</span>
           </div>
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
               55 Enrolled Members Live
             </span>
-            <span className="text-slate-300">|</span>
+            <span className="text-slate-300 dark:text-slate-700">|</span>
             <button
               onClick={() => setCurrentView(currentView === 'student' ? 'admin' : 'student')}
-              className="text-indigo-600 hover:text-indigo-700 font-black underline cursor-pointer"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-black underline cursor-pointer"
             >
               Switch to {currentView === 'student' ? 'Admin Command Center' : 'Mark Attendance View'}
             </button>

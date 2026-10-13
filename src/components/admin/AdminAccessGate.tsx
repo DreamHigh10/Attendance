@@ -78,44 +78,44 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8 sm:py-14 animate-fade-in">
-      <div className="bg-white border-2 border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md text-center">
+      <div className="bg-white dark:bg-[#0f1422] border-2 border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md text-center transition-colors">
         
         {/* Decorative Top Accent Bar */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-500" />
 
         <DreamTeamLogo size="lg" showText={false} className="justify-center mb-4" />
 
-        <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-4 ring-8 ring-amber-50">
-          <Lock className="w-8 h-8 text-amber-600" />
+        <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center mx-auto mb-4 ring-8 ring-amber-50 dark:ring-amber-950/40">
+          <Lock className="w-8 h-8 text-amber-600 dark:text-amber-400" />
         </div>
 
-        <span className="inline-block px-3.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 text-xs font-black rounded-full uppercase tracking-wider mb-2">
+        <span className="inline-block px-3.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-black rounded-full uppercase tracking-wider mb-2">
           Restricted Area &bull; Role-Based Access
         </span>
 
-        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
           Admin Command Center
         </h3>
-        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 mb-6 max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 mb-6 max-w-md mx-auto">
           Access to class secret code management, student registers, and AI email broadcasting is strictly restricted to authorized facilitators.
         </p>
 
         {currentUser && !isAuthorizedAdmin(currentUser.email) && (
-          <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs text-left font-medium">
-            <p className="font-bold flex items-center gap-1.5 text-rose-900 mb-1">
-              <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+          <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs text-left font-medium">
+            <p className="font-bold flex items-center gap-1.5 text-rose-900 dark:text-rose-200 mb-1">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
               <span>Current Account Not Authorized:</span>
             </p>
             <p className="font-mono">{currentUser.email}</p>
-            <p className="mt-1 text-slate-600">
+            <p className="mt-1 text-slate-600 dark:text-slate-300">
               Please sign in with your authorized administrator Google account or enter your credentials.
             </p>
           </div>
         )}
 
         {error && (
-          <div className="mb-6 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-start gap-2 text-left">
-            <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-start gap-2 text-left">
+            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -124,11 +124,11 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
         <button
           onClick={handleGoogleSignIn}
           disabled={isSigningIn}
-          className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 text-sm font-bold border-2 border-slate-300 shadow-sm flex items-center justify-center gap-3 transition-all hover:scale-[1.01] cursor-pointer mb-5"
+          className="w-full py-3.5 px-4 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-bold border-2 border-slate-300 dark:border-slate-700 shadow-sm flex items-center justify-center gap-3 transition-all hover:scale-[1.01] cursor-pointer mb-5"
         >
           {isSigningIn ? (
             <>
-              <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
+              <RefreshCw className="w-4 h-4 animate-spin text-indigo-600 dark:text-indigo-400" />
               <span>Verifying Google Credentials...</span>
             </>
           ) : (
@@ -146,17 +146,17 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
 
         <div className="relative my-5">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-white px-3 text-slate-400 font-bold uppercase">Or verify by email</span>
+            <span className="bg-white dark:bg-[#0f1422] px-3 text-slate-400 dark:text-slate-500 font-bold uppercase">Or verify by email</span>
           </div>
         </div>
 
         {/* Email form */}
         <form onSubmit={handleManualEmailSubmit} className="space-y-3 text-left mb-6">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
               Authorized Admin Email Address
             </label>
             <div className="relative">
@@ -166,7 +166,7 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
                 placeholder="e.g. facilitator@dreamteam.org"
                 value={inputEmail}
                 onChange={(e) => setInputEmail(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 focus:outline-none focus:border-indigo-600 pl-10"
+                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-600 pl-10"
               />
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
             </div>
@@ -174,7 +174,7 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-sm transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-2xl bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-700 text-white font-black text-sm transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
           >
             <span>Verify &amp; Unlock Admin Portal</span>
             <ArrowRight className="w-4 h-4" />
@@ -182,10 +182,10 @@ export const AdminAccessGate: React.FC<AdminAccessGateProps> = ({
         </form>
 
         {/* Return Button */}
-        <div className="mt-6 pt-4 border-t border-slate-100">
+        <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={onReturnToStudentView}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Student Attendance Portal</span>

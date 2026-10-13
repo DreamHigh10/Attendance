@@ -66,9 +66,11 @@ export const ArchitecturalBackground: React.FC = () => {
       time += 0.008;
       ctx.clearRect(0, 0, width, height);
 
+      const isDark = document.documentElement.classList.contains('dark');
+
       // Subtle architectural blueprint grid lines
       const gridSize = 64;
-      ctx.strokeStyle = 'rgba(226, 232, 240, 0.45)';
+      ctx.strokeStyle = isDark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(226, 232, 240, 0.45)';
       ctx.lineWidth = 1;
 
       // Draw horizontal grid
@@ -95,8 +97,8 @@ export const ArchitecturalBackground: React.FC = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < 180) {
-            const alpha = (1 - dist / 180) * 0.22;
-            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            const alpha = (1 - dist / 180) * (isDark ? 0.35 : 0.22);
+            ctx.strokeStyle = isDark ? `rgba(129, 140, 248, ${alpha})` : `rgba(99, 102, 241, ${alpha})`;
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);

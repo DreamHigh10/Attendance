@@ -38,6 +38,7 @@ import { GreatnessLeaderboard } from './leaderboard/GreatnessLeaderboard';
 import { calculateGreatnessLeaderboard, LeaderboardUserEntry } from '../utils/leaderboard';
 import { PointsBreakdownModal } from './common/PointsBreakdownModal';
 import { BookReadingAttendanceSection } from './books/BookReadingAttendanceSection';
+import { ExcellenceBanner } from './common/ExcellenceBanner';
 
 interface StudentPortalProps {
   cohorts: Cohort[];
@@ -341,28 +342,31 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       <div className="text-center mb-6 sm:mb-8">
         <DreamTeamLogo size="lg" showText={false} className="justify-center mb-4" />
 
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-100 via-indigo-100 to-emerald-100 border border-indigo-200/60 text-indigo-900 text-xs sm:text-sm font-extrabold mb-3 shadow-xs">
-          <Sparkles className="w-4 h-4 text-emerald-600" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-100 dark:from-violet-950/80 via-indigo-100 dark:via-indigo-950/80 to-emerald-100 dark:to-emerald-950/80 border border-indigo-200/60 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200 text-xs sm:text-sm font-extrabold mb-3 shadow-xs">
+          <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span>{currentCohort?.name || 'Dream Team Project Cohort 2'} Hub</span>
         </div>
         
-        <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           Cohort Learning &amp; <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-500 bg-clip-text text-transparent">Attendance Portal</span>
         </h2>
-        <p className="mt-3 text-sm sm:text-base font-medium text-slate-600 max-w-xl mx-auto">
+        <p className="mt-3 text-sm sm:text-base font-medium text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
           Mark your daily live class attendance, submit reading challenge reflections, and track your rank on the Greatness Leaderboard.
         </p>
       </div>
 
+      {/* EXCELLENCE & INNOVATION INSPIRATION BANNER */}
+      <ExcellenceBanner />
+
       {/* APP INTERFACE NAVIGATION CONTROLS */}
-      <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-xs max-w-xl mx-auto mb-8 flex items-center justify-between gap-1.5">
+      <div className="bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs max-w-xl mx-auto mb-8 flex items-center justify-between gap-1.5 transition-colors">
         <button
           type="button"
           onClick={() => setHomeTab('class')}
           className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
             homeTab === 'class'
               ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
           }`}
         >
           <CheckCircle2 className="w-4 h-4" />
@@ -375,7 +379,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer relative ${
             homeTab === 'reading'
               ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -391,7 +395,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
             homeTab === 'leaderboard'
               ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/25'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80'
           }`}
         >
           <Trophy className="w-4 h-4 text-amber-500" />
@@ -456,49 +460,49 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
       {/* SUCCESS CONFIRMATION STATE */}
       {markedSuccessData ? (
-        <div className="bg-white border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-emerald-500/10 text-center relative overflow-hidden animate-fade-in">
+        <div className="bg-white dark:bg-[#0f1422] border-2 border-emerald-500/40 dark:border-emerald-600/50 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-emerald-500/10 text-center relative overflow-hidden animate-fade-in transition-colors">
           <div className="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-r from-emerald-500 via-indigo-500 to-emerald-500" />
           
-          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50 shadow-inner">
-            <CheckCircle className="w-12 h-12 text-emerald-600" />
+          <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 rounded-3xl flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50 dark:ring-emerald-950/40 shadow-inner">
+            <CheckCircle className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
           </div>
 
-          <span className="inline-block px-3.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-black rounded-full uppercase tracking-wider mb-3">
+          <span className="inline-block px-3.5 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-black rounded-full uppercase tracking-wider mb-3">
             ✓ Attendance Verified &amp; Recorded
           </span>
 
-          <h3 className="text-2xl sm:text-4xl font-black text-slate-900 mb-2">
+          <h3 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2">
             You&apos;ve marked your attendance for today&apos;s class! 🎉
           </h3>
-          <p className="text-slate-600 text-base sm:text-lg max-w-lg mx-auto mb-8 font-medium">
-            Welcome, <strong className="text-slate-900">{markedSuccessData.record.studentName}</strong>! Your attendance is confirmed and synchronized with the admin dashboard.
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-lg mx-auto mb-8 font-medium">
+            Welcome, <strong className="text-slate-900 dark:text-white">{markedSuccessData.record.studentName}</strong>! Your attendance is confirmed and synchronized with the admin dashboard.
           </p>
 
           {/* Record Summary Card */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8 text-left">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4.5 shadow-xs">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Participant</span>
-              <p className="text-sm font-black text-slate-900 truncate">{markedSuccessData.record.studentName}</p>
-              <p className="text-xs text-indigo-600 font-semibold truncate">{markedSuccessData.record.studentEmail}</p>
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4.5 shadow-xs">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Participant</span>
+              <p className="text-sm font-black text-slate-900 dark:text-white truncate">{markedSuccessData.record.studentName}</p>
+              <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold truncate">{markedSuccessData.record.studentEmail}</p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4.5 shadow-xs">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Time Recorded</span>
-              <p className="text-sm font-black text-slate-900">
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4.5 shadow-xs">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Time Recorded</span>
+              <p className="text-sm font-black text-slate-900 dark:text-white">
                 {new Date(markedSuccessData.record.markedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </p>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 {new Date(markedSuccessData.record.markedAt).toLocaleDateString()}
               </p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4.5 shadow-xs">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Secret Word Used</span>
-              <p className="text-base font-mono font-black text-emerald-600 uppercase">
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4.5 shadow-xs">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Secret Word Used</span>
+              <p className="text-base font-mono font-black text-emerald-600 dark:text-emerald-400 uppercase">
                 {markedSuccessData.record.classCodeUsed}
               </p>
-              <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-bold mt-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Status: Present
+              <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 dark:text-emerald-400 font-bold mt-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Status: Present
               </span>
             </div>
           </div>
@@ -534,23 +538,23 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             )}
 
             {markedSuccessData.studentStats && (
-              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-indigo-100 rounded-2xl p-4.5 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-950/40 dark:to-indigo-950/40 border border-indigo-100 dark:border-indigo-800 rounded-2xl p-4.5 flex items-center justify-between">
                 <div className="flex items-center gap-3.5 text-left">
                   <div className="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-600/20">
                     <Award className="w-7 h-7" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-slate-900">Cohort Attendance Record</h4>
-                    <p className="text-xs font-medium text-slate-600">
+                    <h4 className="text-sm font-black text-slate-900 dark:text-white">Cohort Attendance Record</h4>
+                    <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
                       {markedSuccessData.studentStats.totalAttended} of {markedSuccessData.studentStats.totalCohortClasses} classes attended
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-emerald-600">
+                  <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                     {markedSuccessData.studentStats.attendanceRate}%
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 block uppercase">Overall Score</span>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block uppercase">Overall Score</span>
                 </div>
               </div>
             )}
@@ -559,7 +563,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={handleResetForAnother}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-bold transition-all border border-slate-200"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-sm font-bold transition-all border border-slate-200 dark:border-slate-700 cursor-pointer"
             >
               Mark for Another Class
             </button>
@@ -568,7 +572,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 href={markedSuccessData.classSession.meetingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-extrabold transition-all shadow-lg shadow-indigo-600/25"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-extrabold transition-all shadow-lg shadow-indigo-600/25 cursor-pointer"
               >
                 <span>Return to Live Class Room</span>
                 <ExternalLink className="w-4 h-4" />
@@ -579,7 +583,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       ) : (
 
         /* MAIN ATTENDANCE CARD */
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md">
+        <div className="bg-white dark:bg-[#0f1422] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md transition-colors">
           
           {/* Active Class Live Banner & Countdown */}
           {activeClass && (
@@ -587,7 +591,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               {/* Optional Class Selector if multiple classes */}
               {allCohortClasses.length > 1 && (
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-                  <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">Class Session:</span>
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">Class Session:</span>
                   {allCohortClasses.map((cls) => (
                     <button
                       key={cls.id}
@@ -596,7 +600,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                       className={`px-3 py-1 rounded-xl font-bold whitespace-nowrap transition-all cursor-pointer ${
                         activeClass.id === cls.id
                           ? 'bg-indigo-600 text-white shadow-xs'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {cls.title}
@@ -605,8 +609,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 </div>
               )}
 
-              <div className="p-4 bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                <div className="flex items-center gap-2.5 text-xs text-emerald-900 font-bold">
+              <div className="p-4 bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-indigo-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-2.5 text-xs text-emerald-900 dark:text-emerald-200 font-bold">
                   <span className={`flex h-3 w-3 rounded-full ${
                     isWindowElapsed 
                       ? 'bg-rose-500' 
@@ -615,10 +619,10 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                       : 'bg-emerald-500 animate-ping'
                   }`} />
                   <span>
-                    Class Session: <strong className="text-slate-900 font-black">{activeClass.title}</strong>
+                    Class Session: <strong className="text-slate-900 dark:text-white font-black">{activeClass.title}</strong>
                   </span>
                 </div>
-                <div className="text-xs font-semibold text-emerald-800">
+                <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                   Facilitator: {activeClass.instructorName}
                 </div>
               </div>
@@ -674,8 +678,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-3 animate-fade-in">
-              <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+            <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm flex items-start gap-3 animate-fade-in">
+              <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
               <div>
                 <strong className="font-bold block mb-0.5">Verification Notice</strong>
                 <span>{errorMessage}</span>
@@ -688,11 +692,11 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             {/* STEP 1: EMAIL ADDRESS / GOOGLE SIGN IN */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-indigo-600" />
+                <label className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   <span>Step 1: Your Registered Cohort Email <span className="text-rose-500">*</span></span>
                 </label>
-                <span className="text-xs text-slate-500 font-medium">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                   Matches your registration
                 </span>
               </div>
@@ -715,7 +719,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                         handleLookupStudent(emailInput.trim());
                       }
                     }}
-                    className="w-full bg-slate-50 border border-slate-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 rounded-2xl px-4 py-3.5 text-sm sm:text-base font-semibold text-slate-900 placeholder-slate-400 transition-all pl-11"
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3.5 text-sm sm:text-base font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all pl-11"
                   />
                   <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-4" />
                 </div>
@@ -723,7 +727,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 <button
                   type="button"
                   onClick={handleFirebaseGoogleSignIn}
-                  className="px-4 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold border border-slate-300 shadow-xs flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
+                  className="px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 shadow-xs flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -737,8 +741,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
               {/* Lookup Error / Not Registered alert */}
               {lookupError && (
-                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium flex items-start gap-2.5 animate-fade-in">
-                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs font-medium flex items-start gap-2.5 animate-fade-in">
+                  <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold block">Email Not Found in Cohort 2 Roster</span>
                     <span>{lookupError} Only enrolled members uploaded to the platform can mark attendance.</span>
@@ -749,39 +753,39 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
             {/* VERIFIED PARTICIPANT DETAILS CARD (Brought out immediately upon email match) */}
             {matchedStudentData && matchedStudentData.student && (
-              <div className="bg-gradient-to-br from-indigo-50/80 via-white to-emerald-50/80 border-2 border-indigo-200/80 rounded-2xl p-5 sm:p-6 shadow-md animate-fade-in space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-indigo-100">
+              <div className="bg-gradient-to-br from-indigo-50/80 dark:from-indigo-950/40 via-white dark:via-[#111728] to-emerald-50/80 dark:to-emerald-950/40 border-2 border-indigo-200/80 dark:border-indigo-800 rounded-2xl p-5 sm:p-6 shadow-md animate-fade-in space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-indigo-100 dark:border-indigo-900">
                   <div className="flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-emerald-600" />
-                    <span className="text-xs font-black text-emerald-800 uppercase tracking-wider bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                    <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-xs font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider bg-emerald-100/80 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
                       Verified Member of {currentCohort?.name}
                     </span>
                   </div>
-                  <span className="text-xs font-bold text-indigo-700">
+                  <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
                     Status: Active Member
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Full Name</span>
-                    <p className="font-black text-slate-900 text-sm">{matchedStudentData.student.name}</p>
+                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Full Name</span>
+                    <p className="font-black text-slate-900 dark:text-white text-sm">{matchedStudentData.student.name}</p>
                   </div>
 
-                  <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Phone Number</span>
-                    <p className="font-bold text-slate-800 text-xs font-mono">{matchedStudentData.student.phone || 'Provided on registration'}</p>
+                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Phone Number</span>
+                    <p className="font-bold text-slate-800 dark:text-slate-200 text-xs font-mono">{matchedStudentData.student.phone || 'Provided on registration'}</p>
                   </div>
 
-                  <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Email Address</span>
-                    <p className="font-bold text-indigo-600 text-xs truncate">{matchedStudentData.student.email}</p>
+                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Email Address</span>
+                    <p className="font-bold text-indigo-600 dark:text-indigo-400 text-xs truncate">{matchedStudentData.student.email}</p>
                   </div>
                 </div>
 
                 {/* Greatness Rank & Points Highlights */}
                 {userLeaderboardEntry ? (
-                  <div className="bg-gradient-to-r from-amber-50 via-indigo-50 to-emerald-50 border-2 border-amber-200 rounded-2xl p-4 shadow-xs">
+                  <div className="bg-gradient-to-r from-amber-50 dark:from-amber-950/40 via-indigo-50 dark:via-indigo-950/40 to-emerald-50 dark:to-emerald-950/40 border-2 border-amber-200 dark:border-amber-800/80 rounded-2xl p-4 shadow-xs">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white font-black text-base flex items-center justify-center shadow-md shadow-amber-500/25 flex-shrink-0">
@@ -789,15 +793,15 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded-md border border-amber-300">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-300 dark:border-amber-800">
                               Your Greatness Rank
                             </span>
-                            <span className="text-xs font-black text-slate-900">
+                            <span className="text-xs font-black text-slate-900 dark:text-white">
                               {userLeaderboardEntry.rank === 1 ? '🥇 1st Place Champion' : userLeaderboardEntry.rank === 2 ? '🥈 2nd Place' : userLeaderboardEntry.rank === 3 ? '🥉 3rd Place' : `Ranked #${userLeaderboardEntry.rank} in Cohort`}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-600 mt-0.5 font-medium">
-                            Total Consistency Points: <strong className="text-indigo-600 font-black">{userLeaderboardEntry.totalPoints} pts</strong>
+                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 font-medium">
+                            Total Consistency Points: <strong className="text-indigo-600 dark:text-indigo-400 font-black">{userLeaderboardEntry.totalPoints} pts</strong>
                           </p>
                         </div>
                       </div>
@@ -805,31 +809,31 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                     </div>
 
                     {/* Breakdown Chips */}
-                    <div className="mt-3 pt-3 border-t border-amber-200/70 grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
-                        <span className="text-[10px] text-slate-500 font-bold block uppercase">Attendance (10pt)</span>
-                        <span className="font-black text-indigo-700">{userLeaderboardEntry.attendancePoints} pts</span>
-                        <span className="text-[10px] text-slate-400 block font-normal">({userLeaderboardEntry.totalAttended} classes)</span>
+                    <div className="mt-3 pt-3 border-t border-amber-200/70 dark:border-slate-800 grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-indigo-100 dark:border-indigo-900">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Attendance (10pt)</span>
+                        <span className="font-black text-indigo-700 dark:text-indigo-300">{userLeaderboardEntry.attendancePoints} pts</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.totalAttended} classes)</span>
                       </div>
-                      <div className="bg-white/80 p-2 rounded-xl border border-emerald-100">
-                        <span className="text-[10px] text-slate-500 font-bold block uppercase">Comments (5pt)</span>
-                        <span className="font-black text-emerald-700">{userLeaderboardEntry.commentPoints} pts</span>
-                        <span className="text-[10px] text-slate-400 block font-normal">({userLeaderboardEntry.commentsCount} notes)</span>
+                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-emerald-100 dark:border-emerald-900">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Comments (5pt)</span>
+                        <span className="font-black text-emerald-700 dark:text-emerald-300">{userLeaderboardEntry.commentPoints} pts</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.commentsCount} notes)</span>
                       </div>
-                      <div className="bg-white/80 p-2 rounded-xl border border-amber-100">
-                        <span className="text-[10px] text-slate-500 font-bold block uppercase">Speed (1-5pt)</span>
-                        <span className="font-black text-amber-700">+{userLeaderboardEntry.speedPoints} pts</span>
-                        <span className="text-[10px] text-slate-400 block font-normal">({userLeaderboardEntry.speedBonusCount}x early bird)</span>
+                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-amber-100 dark:border-amber-900">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Speed (1-5pt)</span>
+                        <span className="font-black text-amber-700 dark:text-amber-300">+{userLeaderboardEntry.speedPoints} pts</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.speedBonusCount}x early bird)</span>
                       </div>
                     </div>
 
                     {/* Visual Bar for Attendance Level */}
                     <div className="mt-3 space-y-1">
                       <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="text-slate-600">Cohort Attendance Level</span>
-                        <span className="text-emerald-700">{userLeaderboardEntry.attendanceRate}% ({userLeaderboardEntry.totalAttended}/{userLeaderboardEntry.totalClasses || matchedStudentData.totalCohortClasses || 0})</span>
+                        <span className="text-slate-600 dark:text-slate-300">Cohort Attendance Level</span>
+                        <span className="text-emerald-700 dark:text-emerald-400">{userLeaderboardEntry.attendanceRate}% ({userLeaderboardEntry.totalAttended}/{userLeaderboardEntry.totalClasses || matchedStudentData.totalCohortClasses || 0})</span>
                       </div>
-                      <div className="w-full bg-slate-200/80 rounded-full h-2 overflow-hidden shadow-inner">
+                      <div className="w-full bg-slate-200/80 dark:bg-slate-700 rounded-full h-2 overflow-hidden shadow-inner">
                         <div
                           className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 rounded-full transition-all duration-500"
                           style={{ width: `${Math.min(100, userLeaderboardEntry.attendanceRate)}%` }}
@@ -838,14 +842,14 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                  <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-indigo-600" />
-                      <span className="text-xs font-bold text-slate-700">
-                        Previous Classes Attended: <strong className="text-slate-900">{matchedStudentData.totalAttended ?? 0}</strong>
+                      <Award className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                        Previous Classes Attended: <strong className="text-slate-900 dark:text-white">{matchedStudentData.totalAttended ?? 0}</strong>
                       </span>
                     </div>
-                    <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
                       {matchedStudentData.attendanceRate ?? 100}% Rate
                     </span>
                   </div>
@@ -854,13 +858,13 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             )}
 
             {/* STEP 2: SECRET ATTENDANCE WORD / CODE INPUT */}
-            <div className="pt-2 border-t border-slate-200/80 space-y-2">
+            <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-indigo-600" />
+                <label className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <KeyRound className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   <span>Step 2: Enter Today&apos;s Secret Class Attendance Code <span className="text-rose-500">*</span></span>
                 </label>
-                <span className="text-xs text-slate-500 font-medium">
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                   Sent by facilitator during class
                 </span>
               </div>
@@ -881,8 +885,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                   onChange={(e) => handleCodeChange(e.target.value)}
                   className={`w-full border-2 rounded-2xl px-4 py-4 text-lg sm:text-2xl font-mono font-black tracking-widest text-center transition-all uppercase ${
                     isWindowElapsed || isWindowNotStarted
-                      ? 'bg-slate-100 border-slate-300 text-slate-400 cursor-not-allowed'
-                      : 'bg-slate-50 border-slate-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 text-slate-900 placeholder-slate-400'
+                      ? 'bg-slate-100 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                      : 'bg-slate-50 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500'
                   }`}
                 />
               </div>
@@ -890,7 +894,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
             {/* Optional Feedback */}
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                 Quick Class Note / Takeaway (Optional)
               </label>
               <input
@@ -899,7 +903,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 placeholder="e.g. Understood today's full stack architecture!"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-600 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -981,7 +985,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </div>
 
           {/* UPCOMING CLASSES SCHEDULE & PREPARATION */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
             <UpcomingClassesSection
               classes={allCohortClasses}
               cohort={currentCohort}
@@ -995,7 +999,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </div>
 
           {/* THE GREATNESS RANK & CONSISTENCY LEADERBOARD */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
             <GreatnessLeaderboard
               entries={leaderboardEntries}
               cohortName={currentCohort?.name || 'Cohort 2'}
@@ -1018,7 +1022,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       />
 
       {/* Cohort Help Footer */}
-      <div className="mt-10 text-center text-xs font-medium text-slate-500">
+      <div className="mt-10 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
         <p>
           Dream Team Project Cohort 2 &bull; Facilitated by Engr. Kehinde Ogungbade &amp; Team
         </p>

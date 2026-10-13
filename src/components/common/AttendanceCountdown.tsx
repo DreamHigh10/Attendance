@@ -224,10 +224,10 @@ export const AttendanceCountdown: React.FC<AttendanceCountdownProps> = ({
     return (
       <div className={`rounded-3xl p-5 sm:p-7 border-2 transition-all shadow-xl relative overflow-hidden ${
         isCritical
-          ? 'bg-gradient-to-br from-rose-50 via-rose-100/90 to-red-100 border-rose-400 ring-4 ring-rose-200/60 shadow-rose-200/50'
+          ? 'bg-gradient-to-br from-rose-50 via-rose-100/90 to-red-100 dark:from-rose-950/70 dark:via-rose-900/40 dark:to-red-950/70 border-rose-400 ring-4 ring-rose-200/60 dark:ring-rose-900/40 shadow-rose-200/50'
           : isUrgent
-          ? 'bg-gradient-to-br from-amber-50 via-amber-100/80 to-yellow-50 border-amber-400 ring-4 ring-amber-200/60 shadow-amber-200/50'
-          : 'bg-gradient-to-br from-emerald-50 via-teal-50 to-indigo-50 border-emerald-400/80 ring-4 ring-emerald-100/60 shadow-emerald-200/40'
+          ? 'bg-gradient-to-br from-amber-50 via-amber-100/80 to-yellow-50 dark:from-amber-950/70 dark:via-amber-900/40 dark:to-yellow-950/70 border-amber-400 ring-4 ring-amber-200/60 dark:ring-amber-900/40 shadow-amber-200/50'
+          : 'bg-gradient-to-br from-emerald-50 via-teal-50 to-indigo-50 dark:from-emerald-950/70 dark:via-teal-950/40 dark:to-indigo-950/70 border-emerald-400/80 ring-4 ring-emerald-100/60 dark:ring-emerald-900/40 shadow-emerald-200/40'
       } ${className}`}>
         {/* Top Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -236,7 +236,7 @@ export const AttendanceCountdown: React.FC<AttendanceCountdownProps> = ({
               isCritical ? 'bg-rose-500 animate-ping' : isUrgent ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 animate-ping'
             }`} />
             <span className={`text-xs sm:text-sm font-black uppercase tracking-wider ${
-              isCritical ? 'text-rose-900' : isUrgent ? 'text-amber-900' : 'text-emerald-900'
+              isCritical ? 'text-rose-900 dark:text-rose-200' : isUrgent ? 'text-amber-900 dark:text-amber-200' : 'text-emerald-900 dark:text-emerald-200'
             }`}>
               {isCritical ? '⚡ Final Seconds! Window Closing Fast!' : isUrgent ? '⚠️ Attendance Window Closing Soon!' : '🟢 Attendance Window Open & Live'}
             </span>
@@ -244,7 +244,7 @@ export const AttendanceCountdown: React.FC<AttendanceCountdownProps> = ({
 
           <div className="flex items-center gap-2">
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider ${
-              isCritical ? 'bg-rose-200 text-rose-900' : isUrgent ? 'bg-amber-200 text-amber-900' : 'bg-emerald-200 text-emerald-900'
+              isCritical ? 'bg-rose-200 dark:bg-rose-900/80 text-rose-900 dark:text-rose-200' : isUrgent ? 'bg-amber-200 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200' : 'bg-emerald-200 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-200'
             }`}>
               Live Countdown
             </span>
@@ -252,28 +252,28 @@ export const AttendanceCountdown: React.FC<AttendanceCountdownProps> = ({
         </div>
 
         {/* Big Numerals Display */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-slate-200/80 mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="bg-white/90 dark:bg-[#0f1422]/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800 mb-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="text-left">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">
               Time Remaining to Mark Attendance
             </span>
             <div className={`font-mono text-4xl sm:text-5xl md:text-6xl font-black tracking-widest flex items-center gap-3 ${
-              isCritical ? 'text-rose-600 animate-pulse' : isUrgent ? 'text-amber-600' : 'text-emerald-600'
+              isCritical ? 'text-rose-600 dark:text-rose-400 animate-pulse' : isUrgent ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
             }`}>
-              <Clock className={`w-8 h-8 sm:w-10 sm:h-10 ${isCritical ? 'animate-spin text-rose-600' : 'text-emerald-600'}`} />
+              <Clock className={`w-8 h-8 sm:w-10 sm:h-10 ${isCritical ? 'animate-spin text-rose-600' : 'text-emerald-600 dark:text-emerald-400'}`} />
               <span>{formattedDigits}</span>
             </div>
           </div>
 
           {/* Start and Stop Times */}
           <div className="grid grid-cols-2 gap-3 w-full sm:w-auto text-center sm:text-right">
-            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 sm:px-3">
-              <span className="text-[10px] font-bold text-slate-500 uppercase block">Marking Started</span>
-              <span className="text-xs sm:text-sm font-black text-slate-800">{formattedStartTime}</span>
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-xl p-2.5 sm:px-3">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block">Marking Started</span>
+              <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200">{formattedStartTime}</span>
             </div>
-            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 sm:px-3">
-              <span className="text-[10px] font-bold text-slate-500 uppercase block">Marking Stops At</span>
-              <span className="text-xs sm:text-sm font-black text-rose-700">{formattedEndTime}</span>
+            <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-xl p-2.5 sm:px-3">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block">Marking Stops At</span>
+              <span className="text-xs sm:text-sm font-black text-rose-700 dark:text-rose-400">{formattedEndTime}</span>
             </div>
           </div>
         </div>

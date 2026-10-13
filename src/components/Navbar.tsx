@@ -10,6 +10,7 @@ import {
 import { Cohort } from '../types';
 import { DreamTeamLogo } from './common/DreamTeamLogo';
 import { isAuthorizedAdmin } from '../constants/admins';
+import { ThemeToggle } from './common/ThemeToggle';
 
 interface NavbarProps {
   currentView: 'student' | 'admin';
@@ -39,7 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onScrollToLeaderboard,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-2xl shadow-xs">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-[#0c101a]/95 backdrop-blur-2xl shadow-xs transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
@@ -52,23 +53,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-2 sm:gap-3">
             
             {/* Cohort Selector */}
-            <div className="hidden md:flex items-center gap-2 bg-slate-100/90 border border-slate-200 rounded-2xl px-3 py-1.5">
-              <Layers className="w-4 h-4 text-slate-500" />
+            <div className="hidden md:flex items-center gap-2 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 rounded-2xl px-3 py-1.5 transition-colors">
+              <Layers className="w-4 h-4 text-slate-500 dark:text-slate-400" />
               <select
                 aria-label="Select Cohort"
                 value={selectedCohortId}
                 onChange={(e) => onSelectCohort(e.target.value)}
-                className="bg-transparent text-xs font-black text-slate-800 focus:outline-none cursor-pointer pr-1"
+                className="bg-transparent text-xs font-black text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer pr-1"
               >
                 {cohorts.map((cohort) => (
-                  <option key={cohort.id} value={cohort.id} className="text-slate-800">
+                  <option key={cohort.id} value={cohort.id} className="text-slate-800 dark:text-slate-900">
                     {cohort.name} {cohort.isActive ? '(Active)' : ''}
                   </option>
                 ))}
               </select>
               {activeClassCount > 0 && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                   Live
                 </span>
               )}
@@ -86,16 +87,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }
               }}
               title="View Greatness Rank Leaderboard"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs font-black transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
             >
-              <Trophy className="w-3.5 h-3.5 text-amber-600" />
+              <Trophy className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span className="hidden sm:inline">Greatness Rank</span>
               <span className="sm:hidden font-bold">Rank</span>
             </button>
 
             {/* Google / Account Status */}
             {currentUser ? (
-              <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-2xl px-3 py-1.5">
+              <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 rounded-2xl px-3 py-1.5 transition-colors">
                 {currentUser.photoURL ? (
                   <img src={currentUser.photoURL} alt={currentUser.name} className="w-6 h-6 rounded-full object-cover" />
                 ) : (
@@ -104,14 +105,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 )}
                 <div className="text-left text-xs max-w-[120px] truncate hidden sm:block">
-                  <p className="font-bold text-slate-800 truncate leading-none">{currentUser.name}</p>
-                  <p className="text-[10px] text-slate-500 truncate">{currentUser.email}</p>
+                  <p className="font-bold text-slate-800 dark:text-slate-200 truncate leading-none">{currentUser.name}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{currentUser.email}</p>
                 </div>
                 {onSignOut && (
                   <button
                     onClick={onSignOut}
                     title="Sign Out"
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-200 transition-colors ml-1 cursor-pointer"
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors ml-1 cursor-pointer"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                   </button>
@@ -121,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onGoogleSignInClick}
                 disabled={isSigningIn}
-                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-xs transition-all hover:scale-[1.02] cursor-pointer"
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold shadow-xs transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -133,14 +134,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             ) : null}
 
+            {/* LIGHT & DARK MODE THEME TOGGLE */}
+            <ThemeToggle />
+
             {/* View Switcher: Student Portal & Admin Hub (Protected by AdminAccessGate) */}
-            <nav aria-label="Portal Mode" className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+            <nav aria-label="Portal Mode" className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-slate-700/80 transition-colors">
               <button
                 onClick={() => onViewChange('student')}
                 className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   currentView === 'student'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
                 }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
@@ -151,8 +155,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => onViewChange('admin')}
                 className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                   currentView === 'admin'
-                    ? 'bg-slate-900 text-white shadow-md'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                    ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-md'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
