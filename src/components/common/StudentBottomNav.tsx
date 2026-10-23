@@ -34,7 +34,7 @@ export const StudentBottomNav: React.FC<StudentBottomNavProps> = ({
     {
       id: 'reading' as StudentTabType,
       label: 'Book Challenge',
-      shortLabel: 'Book',
+      shortLabel: 'Book Challenge',
       icon: BookOpen,
       badge: '+10',
       badgeColor: 'bg-amber-400 text-amber-950 font-black',

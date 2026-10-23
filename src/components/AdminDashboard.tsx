@@ -26,8 +26,6 @@ import { AdminAccessGate } from './admin/AdminAccessGate';
 import { isAuthorizedAdmin } from '../constants/admins';
 import { GreatnessLeaderboard } from './leaderboard/GreatnessLeaderboard';
 import { calculateGreatnessLeaderboard } from '../utils/leaderboard';
-import { SeoOptimizationTool } from './seo/SeoOptimizationTool';
-import { Globe } from 'lucide-react';
 
 interface AdminDashboardProps {
   cohorts: Cohort[];
@@ -127,17 +125,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Admin Command Center</span>
               </span>
-
-              {/* SEO Tool Quick Launcher */}
-              <button
-                type="button"
-                onClick={() => handleNavigateToTab('seo')}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/80 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold hover:scale-105 transition-all cursor-pointer shadow-2xs"
-                title="Open SEO & Search Visibility Tool"
-              >
-                <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>SEO Tool (98%)</span>
-              </button>
 
               {currentUser && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300 text-xs font-bold">
@@ -270,12 +257,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           selectedCohortId={selectedCohortId}
           onSelectCohort={onSelectCohort}
           onRefresh={onRefresh}
-        />
-      )}
-
-      {activeTab === 'seo' && (
-        <SeoOptimizationTool
-          cohortName={selectedCohort?.name || 'Cohort 2'}
         />
       )}
 

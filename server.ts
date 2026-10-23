@@ -171,8 +171,49 @@ const db = {
   attendance: [] as AttendanceRecordData[],
   campaigns: [] as EmailCampaignData[],
   importedFiles: [] as ImportedFileData[],
-  books: [] as BookData[],
-  bookAttendance: [] as BookAttendanceData[],
+  books: [
+    {
+      id: 'book-cohort-challenge-1',
+      cohortId: 'dtp-cohort-2',
+      title: 'Cohort 2 Reading Challenge',
+      author: 'Cohort Leadership & Innovation Masterwork',
+      description: 'Weekly cohort reading assignment. Read your assigned chapters daily, extract practical takeaways on innovative thinking, discipline, and execution, and submit your mandatory review below to mark your reading attendance and earn +10 Greatness points.',
+      pagesPerDay: 15,
+      totalPages: 320,
+      startDate: '2026-10-10',
+      stopDate: '2026-11-10',
+      deadline: '2026-11-15',
+      isActive: true,
+      fileType: 'pdf',
+      fileName: 'Cohort2_Reading_Assignment.pdf'
+    }
+  ] as BookData[],
+  bookAttendance: [
+    {
+      id: 'book-att-sample-1',
+      bookId: 'book-cohort-challenge-1',
+      cohortId: 'dtp-cohort-2',
+      studentEmail: 'kehinde@dreamteam.org',
+      studentName: 'Kehinde Ogungbade',
+      pagesReadToday: 15,
+      review: "Today's reading emphasized that consistency is the foundation of mastery. Breaking big objectives into daily, measurable habits compounds into extraordinary outcomes.",
+      keyTakeaway: 'Small, daily disciplines sustained over time generate massive exponential results.',
+      rating: 5,
+      markedAt: new Date(Date.now() - 3600000 * 24).toISOString()
+    },
+    {
+      id: 'book-att-sample-2',
+      bookId: 'book-cohort-challenge-1',
+      cohortId: 'dtp-cohort-2',
+      studentEmail: 'adu@dreamteam.org',
+      studentName: 'Adu Oluwaseyi',
+      pagesReadToday: 20,
+      review: 'Loved the section on environment design. Rather than relying solely on willpower, structuring your environment to make good decisions effortless is a game-changer.',
+      keyTakeaway: 'Design your working environment for focus and effortless execution.',
+      rating: 5,
+      markedAt: new Date(Date.now() - 3600000 * 8).toISOString()
+    }
+  ] as BookAttendanceData[],
   loungeMessages: [
     {
       id: 'lounge-msg-welcome',

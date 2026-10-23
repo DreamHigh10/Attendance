@@ -21,9 +21,51 @@ export const DEFAULT_ATTENDANCE: AttendanceRecord[] = [];
 
 export const DEFAULT_IMPORTED_FILES: ImportedFileLog[] = [];
 
-export const DEFAULT_BOOKS: BookAssignment[] = [];
+export const DEFAULT_BOOKS: BookAssignment[] = [
+  {
+    id: 'book-cohort-challenge-1',
+    cohortId: 'dtp-cohort-2',
+    title: 'Cohort 2 Reading Challenge',
+    author: 'Cohort Leadership & Innovation Masterwork',
+    description: 'Weekly cohort reading assignment. Read your assigned chapters daily, extract practical takeaways on innovative thinking, discipline, and execution, and submit your mandatory review below to mark your reading attendance and earn +10 Greatness points.',
+    pagesPerDay: 15,
+    totalPages: 320,
+    startDate: '2026-10-10',
+    stopDate: '2026-11-10',
+    deadline: '2026-11-15',
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    fileType: 'pdf',
+    fileName: 'Cohort2_Reading_Assignment.pdf'
+  }
+];
 
-export const DEFAULT_BOOK_ATTENDANCE: BookAttendanceRecord[] = [];
+export const DEFAULT_BOOK_ATTENDANCE: BookAttendanceRecord[] = [
+  {
+    id: 'book-att-sample-1',
+    bookId: 'book-cohort-challenge-1',
+    cohortId: 'dtp-cohort-2',
+    studentEmail: 'kehinde@dreamteam.org',
+    studentName: 'Kehinde Ogungbade',
+    pagesReadToday: 15,
+    review: "Today's reading emphasized that consistency is the foundation of mastery. Breaking big objectives into daily, measurable habits compounds into extraordinary outcomes.",
+    keyTakeaway: 'Small, daily disciplines sustained over time generate massive exponential results.',
+    rating: 5,
+    markedAt: new Date(Date.now() - 3600000 * 24).toISOString()
+  },
+  {
+    id: 'book-att-sample-2',
+    bookId: 'book-cohort-challenge-1',
+    cohortId: 'dtp-cohort-2',
+    studentEmail: 'adu@dreamteam.org',
+    studentName: 'Adu Oluwaseyi',
+    pagesReadToday: 20,
+    review: 'Loved the section on environment design. Rather than relying solely on willpower, structuring your environment to make good decisions effortless is a game-changer.',
+    keyTakeaway: 'Design your working environment for focus and effortless execution.',
+    rating: 5,
+    markedAt: new Date(Date.now() - 3600000 * 8).toISOString()
+  }
+];
 
 export const DEFAULT_LOUNGE_MESSAGES: LoungeMessage[] = [
   {
@@ -97,6 +139,8 @@ export class PersistentDataStore {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        const validBooks = (parsed.books || []).filter((b: any) => b.id !== 'book-dtp-1' && !b.title?.toLowerCase().includes('atomic'));
+        const validBookAttendance = (parsed.bookAttendance || []).filter((a: any) => a.bookId !== 'book-dtp-1');
         return {
           cohorts: parsed.cohorts?.length ? parsed.cohorts : DEFAULT_COHORTS,
           classes: parsed.classes || [],
@@ -104,8 +148,8 @@ export class PersistentDataStore {
           attendance: parsed.attendance || [],
           campaigns: parsed.campaigns || [],
           importedFiles: parsed.importedFiles || [],
-          books: (parsed.books || []).filter((b: any) => b.id !== 'book-dtp-1' && !b.title?.toLowerCase().includes('atomic')),
-          bookAttendance: (parsed.bookAttendance || []).filter((a: any) => a.bookId !== 'book-dtp-1'),
+          books: validBooks.length ? validBooks : DEFAULT_BOOKS,
+          bookAttendance: validBookAttendance.length ? validBookAttendance : DEFAULT_BOOK_ATTENDANCE,
           loungeMessages: parsed.loungeMessages?.length ? parsed.loungeMessages : DEFAULT_LOUNGE_MESSAGES,
           version: parsed.version || 6,
         };
@@ -128,7 +172,7 @@ export class PersistentDataStore {
       campaigns: [],
       importedFiles: [],
       books: DEFAULT_BOOKS,
-      bookAttendance: [],
+      bookAttendance: DEFAULT_BOOK_ATTENDANCE,
       loungeMessages: DEFAULT_LOUNGE_MESSAGES,
       version: 6,
     };

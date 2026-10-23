@@ -7,11 +7,10 @@ import {
   Users, 
   Settings,
   Sparkles,
-  Trophy,
-  Globe
+  Trophy
 } from 'lucide-react';
 
-export type AdminTabType = 'classes' | 'attendance' | 'books' | 'leaderboard' | 'emails' | 'roster' | 'cohorts' | 'seo';
+export type AdminTabType = 'classes' | 'attendance' | 'books' | 'leaderboard' | 'emails' | 'roster' | 'cohorts';
 
 interface AdminBottomNavProps {
   activeTab: AdminTabType;
@@ -72,13 +71,6 @@ export const AdminBottomNav: React.FC<AdminBottomNavProps> = ({
       icon: Users,
       badge: String(rosterCount),
       badgeColor: 'bg-blue-600',
-    },
-    {
-      id: 'seo' as AdminTabType,
-      label: 'SEO',
-      icon: Globe,
-      badge: 'Live',
-      badgeColor: 'bg-emerald-500',
     },
     {
       id: 'cohorts' as AdminTabType,
