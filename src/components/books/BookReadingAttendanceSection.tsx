@@ -67,12 +67,36 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
   bookAttendanceRecords = [],
   onMarkSuccess,
 }) => {
-  // Fall back to default active book if books array is currently empty
-  const effectiveBooks = (books && books.length > 0) ? books : [DEFAULT_COHORT_BOOK];
-  const activeBooks = effectiveBooks.filter(b => b.isActive);
-  const [selectedBookId, setSelectedBookId] = useState<string>(activeBooks[0]?.id || effectiveBooks[0]?.id || DEFAULT_COHORT_BOOK.id);
+  // Filter and prioritize actual books uploaded by the admin over the placeholder
+  const adminBooks = (books || []).filter(
+    b => b.id !== 'book-cohort-challenge-1' && !b.title.toLowerCase().includes('cohort 2 reading challenge')
+  );
 
-  const activeBook = effectiveBooks.find(b => b.id === selectedBookId) || activeBooks[0] || effectiveBooks[0] || DEFAULT_COHORT_BOOK;
+  const effectiveBooks = adminBooks.length > 0 
+    ? adminBooks 
+    : ((books && books.length > 0) ? books : [DEFAULT_COHORT_BOOK]);
+
+  const activeBooks = effectiveBooks.filter(b => b.isActive);
+  const defaultSelectedBook = activeBooks[0] || effectiveBooks[0] || DEFAULT_COHORT_BOOK;
+
+  const [selectedBookId, setSelectedBookId] = useState<string>(defaultSelectedBook.id);
+
+  // Synchronize selectedBookId automatically when books list updates from admin upload
+  useEffect(() => {
+    if (adminBooks.length > 0) {
+      const active = adminBooks.find(b => b.isActive) || adminBooks[0];
+      if (active && (!selectedBookId || selectedBookId === 'book-cohort-challenge-1' || !adminBooks.some(b => b.id === selectedBookId))) {
+        setSelectedBookId(active.id);
+      }
+    } else if (books && books.length > 0) {
+      const active = books.find(b => b.isActive) || books[0];
+      if (active && !books.some(b => b.id === selectedBookId)) {
+        setSelectedBookId(active.id);
+      }
+    }
+  }, [books, cohort?.id]);
+
+  const activeBook = effectiveBooks.find(b => b.id === selectedBookId) || defaultSelectedBook;
 
   // Form states
   const [emailInput, setEmailInput] = useState<string>(currentEmail || '');
@@ -100,7 +124,7 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
     if (activeBook?.pagesPerDay) {
       setPagesRead(activeBook.pagesPerDay);
     }
-  }, [activeBook?.id]);
+  }, [activeBook?.id, activeBook?.pagesPerDay]);
 
   // Authorization check
   const cleanEmail = emailInput.trim().toLowerCase();
@@ -298,22 +322,35 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
         
         {/* LEFT COLUMN: The Book Profile & Target Details (5 cols) */}
         <div className="lg:col-span-5 space-y-5">
-          <div className="bg-white dark:bg-[#0f1422] border-2 border-violet-200/90 dark:border-violet-900/60 rounded-3xl p-6 shadow-xl relative overflow-hidden backdrop-blur-md transition-colors">
+          <div className="bg-white dark:bg-[#0f1422] border-2 border-violet-200/90 dark:border-violet-900/60 border-t-4 border-t-violet-600 rounded-3xl p-6 shadow-xl relative overflow-hidden backdrop-blur-md transition-colors">
             
-            {/* Top Accent Bar */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-violet-600 via-indigo-600 to-amber-400" />
-
             <div className="flex items-start justify-between gap-4 mb-4">
-              <div className="flex-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-200/60 dark:border-indigo-800">
-                  Currently Reading &bull; {cohort?.name || 'Cohort 2'}
-                </span>
-                <h4 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-md border border-indigo-200/60 dark:border-indigo-800">
+                    Currently Reading &bull; {cohort?.name || 'Cohort 2'}
+                  </span>
+                  {activeBook.fileName && (
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
+                      <FileText className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                      Uploaded File
+                    </span>
+                  )}
+                </div>
+
+                <h4 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight break-words">
                   {activeBook.title}
                 </h4>
-                <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                
+                <p className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">
                   By <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">{activeBook.author}</span>
                 </p>
+
+                {activeBook.fileName && (
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-1">
+                    Document: <strong className="text-slate-700 dark:text-slate-300">{activeBook.fileName}</strong>
+                  </p>
+                )}
               </div>
 
               {/* Book badge icon */}
@@ -368,7 +405,7 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
               className="w-full py-3 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Download className="w-4 h-4 text-white" />
-              <span>Download Study Guide ({activeBook.fileType ? activeBook.fileType.toUpperCase() : 'PDF'})</span>
+              <span>Download Book Material ({activeBook.fileName || (activeBook.fileType ? activeBook.fileType.toUpperCase() : 'PDF')})</span>
             </button>
 
           </div>

@@ -1,13 +1,9 @@
-import React from 'react';
 import { 
-  CheckCircle2, 
-  ShieldCheck, 
   Layers, 
   LogOut 
 } from 'lucide-react';
 import { Cohort } from '../types';
 import { DreamTeamLogo } from './common/DreamTeamLogo';
-import { isAuthorizedAdmin } from '../constants/admins';
 import { ThemeToggle } from './common/ThemeToggle';
 import { PWAInstallButton } from './common/PWAInstallButton';
 
@@ -114,33 +110,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* LIGHT & DARK MODE THEME TOGGLE */}
             <ThemeToggle />
-
-            {/* View Switcher: Student Portal & Admin Hub (Protected by AdminAccessGate) */}
-            <nav aria-label="Portal Mode" className="flex items-center bg-slate-100 dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-slate-700/80 transition-colors">
-              <button
-                onClick={() => onViewChange('student')}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  currentView === 'student'
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
-                }`}
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Student</span>
-              </button>
-
-              <button
-                onClick={() => onViewChange('admin')}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  currentView === 'admin'
-                    ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
-                }`}
-              >
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Admin Hub</span>
-              </button>
-            </nav>
 
           </div>
 

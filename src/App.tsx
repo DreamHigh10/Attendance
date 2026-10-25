@@ -151,13 +151,41 @@ export default function App() {
     try {
       const user = await firebaseAuth.signInWithGoogle();
       if (user && user.email) {
+        const clean = user.email.toLowerCase().trim();
+        const isAdmin = isAuthorizedAdmin(clean);
+        let matchedStudent = students.find((s) => s.email.toLowerCase().trim() === clean);
+
+        if (!matchedStudent && !isAdmin) {
+          try {
+            const lookup = await api.lookupStudent(clean);
+            if (lookup.found && lookup.student) {
+              matchedStudent = lookup.student;
+            }
+          } catch {}
+        }
+
+        if (!isAdmin && !matchedStudent) {
+          await firebaseAuth.signOut();
+          setAuthErrorMessage(`"${user.email}" is not registered on the cohort roster. Access is restricted to enrolled cohort students and administrators.`);
+          setIsGoogleModalOpen(true);
+          return;
+        }
+
+        const studentName = matchedStudent ? matchedStudent.name : (user.displayName || 'Cohort Member');
+
         setCurrentUser({
           email: user.email,
-          name: user.displayName || 'Cohort Member',
+          name: studentName,
           photoURL: user.photoURL || undefined,
           isGoogleAuth: true,
         });
         localStorage.setItem('dtp_student_email', user.email);
+
+        if (isAdmin) {
+          handleAdminContinue(user.email, studentName);
+        } else {
+          handleStudentContinue(user.email, studentName, 'attendance');
+        }
       }
     } catch (err: any) {
       console.warn('Google popup auth note:', err);
@@ -176,6 +204,16 @@ export default function App() {
   };
 
   const handleSelectGoogleAccount = (email: string, name: string) => {
+    const clean = email.toLowerCase().trim();
+    const isAdmin = isAuthorizedAdmin(clean);
+    const matchedStudent = students.find((s) => s.email.toLowerCase().trim() === clean);
+
+    if (!isAdmin && !matchedStudent) {
+      setAuthErrorMessage(`"${email}" is not registered on the cohort roster. Access is restricted to enrolled cohort students and administrators.`);
+      setIsGoogleModalOpen(true);
+      return;
+    }
+
     setCurrentUser({
       email,
       name,
@@ -183,6 +221,12 @@ export default function App() {
     });
     localStorage.setItem('dtp_student_email', email);
     setIsGoogleModalOpen(false);
+
+    if (isAdmin) {
+      handleAdminContinue(email, name);
+    } else {
+      handleStudentContinue(email, name, 'attendance');
+    }
   };
 
   const handleStudentContinue = (email: string, name: string, action: WelcomeAction) => {

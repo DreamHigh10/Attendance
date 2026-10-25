@@ -16,6 +16,7 @@ import { DreamTeamLogo } from '../common/DreamTeamLogo';
 import { ArchitecturalBackground } from '../common/ArchitecturalBackground';
 import { isAuthorizedAdmin } from '../../constants/admins';
 import { Student } from '../../types';
+import { api } from '../../services/api';
 
 export type WelcomeAction = 'attendance' | 'leaderboard' | 'reading';
 
@@ -54,23 +55,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     name: string;
   } | null>(null);
 
-  const resolveStudentName = (email: string): string => {
-    const clean = email.trim().toLowerCase();
-    const matched = registeredStudents.find(
-      (s) => s.email.trim().toLowerCase() === clean
-    );
-    if (matched?.name) return matched.name;
-
-    // Fallback: format name from email prefix (e.g. kehinde.ogungbade -> Kehinde Ogungbade)
-    const prefix = clean.split('@')[0] || 'Cohort Member';
-    return prefix
-      .split(/[._-]/)
-      .filter(Boolean)
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(' ');
-  };
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     const clean = emailInput.trim().toLowerCase();
@@ -85,22 +70,40 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     // 1. ADMIN CHECK: If user is an authorized admin, navigate them directly to admin interface
     if (isAuthorizedAdmin(clean)) {
       const adminName = getAdminDisplayName(clean);
-      setTimeout(() => {
-        setIsProcessing(false);
-        onAdminContinue(clean, adminName);
-      }, 200);
+      setIsProcessing(false);
+      onAdminContinue(clean, adminName);
       return;
     }
 
-    // 2. STUDENT CHECK: Show the welcome pop-up with choices
-    const studentName = resolveStudentName(clean);
-    setTimeout(() => {
+    // 2. REGISTERED STUDENT CHECK: Only students on the roster can proceed
+    let matchedStudent = registeredStudents.find(
+      (s) => s.email.trim().toLowerCase() === clean
+    );
+
+    // If not found in memory prop, perform live lookup from backend/Firestore
+    if (!matchedStudent) {
+      try {
+        const lookup = await api.lookupStudent(clean);
+        if (lookup.found && lookup.student) {
+          matchedStudent = lookup.student;
+        }
+      } catch (err) {
+        // network fallback
+      }
+    }
+
+    if (!matchedStudent) {
       setIsProcessing(false);
-      setPendingStudent({
-        email: clean,
-        name: studentName,
-      });
-    }, 200);
+      setError(`"${clean}" is not found on the cohort roster. Only enrolled students and cohort administrators can proceed to the website.`);
+      return;
+    }
+
+    // 3. STUDENT CONFIRMED: Show the welcome pop-up with choices
+    setIsProcessing(false);
+    setPendingStudent({
+      email: clean,
+      name: matchedStudent.name,
+    });
   };
 
   const handleActionSelect = (action: WelcomeAction) => {
