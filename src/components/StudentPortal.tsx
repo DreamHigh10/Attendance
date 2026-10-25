@@ -54,6 +54,7 @@ interface StudentPortalProps {
   books?: BookAssignment[];
   bookAttendanceRecords?: BookAttendanceRecord[];
   onRefreshBooks?: () => void;
+  initialTab?: StudentTabType;
 }
 
 export const StudentPortal: React.FC<StudentPortalProps> = ({
@@ -67,6 +68,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   books = [],
   bookAttendanceRecords = [],
   onRefreshBooks,
+  initialTab,
 }) => {
   // Input fields
   const [emailInput, setEmailInput] = useState<string>(() => {
@@ -95,6 +97,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [isWindowElapsed, setIsWindowElapsed] = useState<boolean>(false);
   const [isWindowNotStarted, setIsWindowNotStarted] = useState<boolean>(false);
+  const [isClassOver24Hours, setIsClassOver24Hours] = useState<boolean>(false);
 
   // Greatness Leaderboard State
   const [portalStudents, setPortalStudents] = useState<Student[]>(allStudents);
@@ -102,10 +105,44 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
 
   // App Interface Navigation Tab ('class' | 'reading' | 'leaderboard' | 'lounge')
-  const [homeTab, setHomeTab] = useState<StudentTabType>('class');
+  const [homeTab, setHomeTab] = useState<StudentTabType>(initialTab || 'class');
+
+  useEffect(() => {
+    if (initialTab) {
+      setHomeTab(initialTab);
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (currentUser?.email) {
+      setEmailInput(currentUser.email);
+      handleLookupStudent(currentUser.email);
+    }
+  }, [currentUser?.email]);
+
+  const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
+  const isClassEndedOver24Hours = (cls?: ClassSession | null): boolean => {
+    if (!cls) return false;
+    let endTimeMs = 0;
+    if (cls.attendanceEndTime) {
+      endTimeMs = new Date(cls.attendanceEndTime).getTime();
+    } else if (cls.date && cls.time) {
+      endTimeMs = new Date(`${cls.date}T${cls.time}`).getTime();
+    } else if (cls.date) {
+      endTimeMs = new Date(`${cls.date}T23:59:59`).getTime();
+    }
+    if (endTimeMs && !isNaN(endTimeMs)) {
+      return Date.now() > endTimeMs + TWENTY_FOUR_HOURS_MS;
+    }
+    return false;
+  };
 
   const activeClass = allCohortClasses.find(c => c.id === selectedClassId)
     || allCohortClasses.find(c => c.isAttendanceOpen && (!c.attendanceEndTime || Date.now() <= new Date(c.attendanceEndTime).getTime()))
+    || allCohortClasses.find(c => !isClassEndedOver24Hours(c))
+    || allCohortClasses.find(c => new Date(c.date).getTime() >= Date.now())
+    || allCohortClasses[allCohortClasses.length - 1]
     || allCohortClasses[0];
 
   useEffect(() => {
@@ -116,6 +153,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     if (!activeClass) {
       setIsWindowElapsed(false);
       setIsWindowNotStarted(false);
+      setIsClassOver24Hours(false);
       return;
     }
 
@@ -130,6 +168,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
       setIsWindowNotStarted(isStartFuture);
       setIsWindowElapsed(isEndPassed);
+      setIsClassOver24Hours(isClassEndedOver24Hours(activeClass));
     };
 
     check();
@@ -341,25 +380,16 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12 pb-32 sm:pb-36">
       
-      {/* Radiant Top Hero Header with Logo */}
-      <div className="text-center mb-6 sm:mb-8">
-        <DreamTeamLogo size="lg" showText={false} className="justify-center mb-4" />
-
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-100 dark:from-violet-950/80 via-indigo-100 dark:via-indigo-950/80 to-emerald-100 dark:to-emerald-950/80 border border-indigo-200/60 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200 text-xs sm:text-sm font-extrabold mb-3 shadow-xs">
-          <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <span>{currentCohort?.name || 'Dream Team Project Cohort 2'} Hub</span>
-        </div>
-        
-        <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          Cohort Learning &amp; <span className="bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-500 bg-clip-text text-transparent">Attendance Portal</span>
-        </h2>
-        <p className="mt-3 text-sm sm:text-base font-medium text-slate-600 dark:text-slate-300 max-w-xl mx-auto">
-          Mark your daily live class attendance, submit reading challenge reflections, and track your rank on the Greatness Leaderboard.
+      {/* Clean, Streamlined Header */}
+      <div className="text-center mb-6">
+        <DreamTeamLogo size="md" showText={false} className="justify-center mb-2" />
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          {currentCohort?.name || 'Cohort 2 Hub'}
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          Class check-in, book challenges &amp; rankings
         </p>
       </div>
-
-      {/* EXCELLENCE & INNOVATION INSPIRATION BANNER */}
-      <ExcellenceBanner />
 
 
       {/* READING CHALLENGE TAB VIEW */}
@@ -560,8 +590,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         /* MAIN ATTENDANCE CARD */
         <div className="bg-white dark:bg-[#0f1422] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md transition-colors">
           
-          {/* Active Class Live Banner & Countdown */}
-          {activeClass && (
+          {/* Active Class Live Banner & Countdown - Disappears 24 hours after class has ended */}
+          {activeClass && !isClassOver24Hours && (
             <div className="mb-6 space-y-3">
               {/* Optional Class Selector if multiple classes */}
               {allCohortClasses.length > 1 && (
@@ -613,70 +643,57 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </div>
           )}
 
-          {/* Scheduled / Not Started Notice */}
-          {isWindowNotStarted && activeClass?.attendanceStartTime && (
-            <div className="mb-6 p-4.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 text-sm flex items-start gap-3.5 shadow-sm animate-fade-in">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
-                <Hourglass className="w-5 h-5 animate-pulse" />
-              </div>
-              <div>
-                <strong className="font-black text-amber-900 block text-base mb-0.5">
-                  Attendance Window Scheduled &bull; Opens at {new Date(activeClass.attendanceStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </strong>
-                <p className="text-xs sm:text-sm text-amber-800">
-                  Submissions are currently pending start time. The secret code field and submit button will unlock automatically when the countdown starts.
-                </p>
-              </div>
+          {/* Scheduled / Not Started Notice - Disappears 24 hours after class has ended */}
+          {isWindowNotStarted && activeClass?.attendanceStartTime && !isClassOver24Hours && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs sm:text-sm flex items-center gap-3 animate-fade-in font-medium">
+              <Hourglass className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 animate-pulse" />
+              <span>
+                Attendance window opens at <strong>{new Date(activeClass.attendanceStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>. The code field will unlock automatically.
+              </span>
             </div>
           )}
 
-          {/* Locked Notice if countdown elapsed */}
-          {isWindowElapsed && (
-            <div className="mb-6 p-4.5 rounded-2xl bg-rose-50 border-2 border-rose-300 text-rose-900 text-sm flex items-start gap-3.5 shadow-sm animate-fade-in">
-              <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0 text-rose-600">
-                <Lock className="w-5 h-5" />
+          {/* Locked Notice if countdown elapsed - Disappears 24 hours after class has ended */}
+          {isWindowElapsed && !isClassOver24Hours && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200 text-xs sm:text-sm flex items-center gap-3 animate-fade-in font-medium">
+              <Lock className="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+              <span>
+                Attendance window closed at {activeClass?.attendanceEndTime ? new Date(activeClass.attendanceEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'the deadline'}. Submissions are locked.
+              </span>
+            </div>
+          )}
+
+          {/* Standby Notice when 24 hours have elapsed after class ended */}
+          {isClassOver24Hours && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs flex items-center justify-between gap-3 animate-fade-in font-medium">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-slate-400" />
+                <span>No live class session in progress. Attendance check-in opens during scheduled classes.</span>
               </div>
-              <div>
-                <strong className="font-black text-rose-900 block text-base mb-0.5">
-                  Attendance Window Has Elapsed &bull; Submissions Locked
-                </strong>
-                <p className="text-xs sm:text-sm text-rose-800">
-                  The countdown timer for this class has reached 00:00. The attendance window closed at{' '}
-                  <span className="font-bold underline">
-                    {activeClass?.attendanceEndTime ? new Date(activeClass.attendanceEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'the deadline'}
-                  </span>
-                  . In accordance with policy, no further check-ins can be accepted.
-                </p>
-              </div>
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-lg">
+                Standby
+              </span>
             </div>
           )}
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm flex items-start gap-3 animate-fade-in">
-              <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <strong className="font-bold block mb-0.5">Verification Notice</strong>
-                <span>{errorMessage}</span>
-              </div>
+            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center gap-2.5 animate-fade-in">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+              <span>{errorMessage}</span>
             </div>
           )}
 
-          <form onSubmit={handleMarkAttendance} className="space-y-6">
+          <form onSubmit={handleMarkAttendance} className="space-y-5">
             
-            {/* STEP 1: EMAIL ADDRESS / GOOGLE SIGN IN */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                  <span>Step 1: Your Registered Cohort Email <span className="text-rose-500">*</span></span>
-                </label>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Matches your registration
-                </span>
-              </div>
+            {/* EMAIL ADDRESS / GOOGLE SIGN IN */}
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>Registered Email <span className="text-rose-500">*</span></span>
+              </label>
 
-              <div className="flex flex-col sm:flex-row gap-2.5">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
                   <input
                     type="email"
@@ -694,15 +711,15 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                         handleLookupStudent(emailInput.trim());
                       }
                     }}
-                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3.5 text-sm sm:text-base font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all pl-11"
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all pl-10"
                   />
-                  <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-4" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 </div>
 
                 <button
                   type="button"
                   onClick={handleFirebaseGoogleSignIn}
-                  className="px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 shadow-xs flex items-center justify-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
+                  className="px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300 dark:border-slate-700 shadow-2xs flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -714,154 +731,66 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 </button>
               </div>
 
-              {/* Lookup Error / Not Registered alert */}
+              {/* Lookup Error */}
               {lookupError && (
-                <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs font-medium flex items-start gap-2.5 animate-fade-in">
-                  <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold block">Email Not Found in Cohort 2 Roster</span>
-                    <span>{lookupError} Only enrolled members uploaded to the platform can mark attendance.</span>
-                  </div>
+                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-center gap-2 animate-fade-in font-medium">
+                  <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                  <span>{lookupError} Only enrolled cohort members can mark attendance.</span>
                 </div>
               )}
             </div>
 
-            {/* VERIFIED PARTICIPANT DETAILS CARD (Brought out immediately upon email match) */}
+            {/* SLEEK 1-LINE VERIFIED PARTICIPANT STATUS */}
             {matchedStudentData && matchedStudentData.student && (
-              <div className="bg-gradient-to-br from-indigo-50/80 dark:from-indigo-950/40 via-white dark:via-[#111728] to-emerald-50/80 dark:to-emerald-950/40 border-2 border-indigo-200/80 dark:border-indigo-800 rounded-2xl p-5 sm:p-6 shadow-md animate-fade-in space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-indigo-100 dark:border-indigo-900">
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-xs font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider bg-emerald-100/80 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                      Verified Member of {currentCohort?.name}
-                    </span>
+              <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-3.5 flex items-center justify-between gap-3 animate-fade-in">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0">
+                    <UserCheck className="w-5 h-5" />
                   </div>
-                  <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
-                    Status: Active Member
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-slate-900 dark:text-white truncate">
+                      {matchedStudentData.student.name}
+                    </p>
+                    <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium truncate">
+                      Verified member &bull; {userLeaderboardEntry ? `${userLeaderboardEntry.totalPoints} pts` : 'Enrolled'}
+                    </p>
+                  </div>
+                </div>
+                {userLeaderboardEntry && (
+                  <span className="text-xs font-black text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-nowrap">
+                    Rank #{userLeaderboardEntry.rank}
                   </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Full Name</span>
-                    <p className="font-black text-slate-900 dark:text-white text-sm">{matchedStudentData.student.name}</p>
-                  </div>
-
-                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Phone Number</span>
-                    <p className="font-bold text-slate-800 dark:text-slate-200 text-xs font-mono">{matchedStudentData.student.phone || 'Provided on registration'}</p>
-                  </div>
-
-                  <div className="bg-white dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
-                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">Email Address</span>
-                    <p className="font-bold text-indigo-600 dark:text-indigo-400 text-xs truncate">{matchedStudentData.student.email}</p>
-                  </div>
-                </div>
-
-                {/* Greatness Rank & Points Highlights */}
-                {userLeaderboardEntry ? (
-                  <div className="bg-gradient-to-r from-amber-50 dark:from-amber-950/40 via-indigo-50 dark:via-indigo-950/40 to-emerald-50 dark:to-emerald-950/40 border-2 border-amber-200 dark:border-amber-800/80 rounded-2xl p-4 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white font-black text-base flex items-center justify-center shadow-md shadow-amber-500/25 flex-shrink-0">
-                          #{userLeaderboardEntry.rank}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-300 dark:border-amber-800">
-                              Your Greatness Rank
-                            </span>
-                            <span className="text-xs font-black text-slate-900 dark:text-white">
-                              {userLeaderboardEntry.rank === 1 ? '🥇 1st Place Champion' : userLeaderboardEntry.rank === 2 ? '🥈 2nd Place' : userLeaderboardEntry.rank === 3 ? '🥉 3rd Place' : `Ranked #${userLeaderboardEntry.rank} in Cohort`}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 font-medium">
-                            Total Consistency Points: <strong className="text-indigo-600 dark:text-indigo-400 font-black">{userLeaderboardEntry.totalPoints} pts</strong>
-                          </p>
-                        </div>
-                      </div>
-
-                    </div>
-
-                    {/* Breakdown Chips */}
-                    <div className="mt-3 pt-3 border-t border-amber-200/70 dark:border-slate-800 grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-indigo-100 dark:border-indigo-900">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Attendance (10pt)</span>
-                        <span className="font-black text-indigo-700 dark:text-indigo-300">{userLeaderboardEntry.attendancePoints} pts</span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.totalAttended} classes)</span>
-                      </div>
-                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-emerald-100 dark:border-emerald-900">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Comments (5pt)</span>
-                        <span className="font-black text-emerald-700 dark:text-emerald-300">{userLeaderboardEntry.commentPoints} pts</span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.commentsCount} notes)</span>
-                      </div>
-                      <div className="bg-white/80 dark:bg-slate-800/80 p-2 rounded-xl border border-amber-100 dark:border-amber-900">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block uppercase">Speed (1-5pt)</span>
-                        <span className="font-black text-amber-700 dark:text-amber-300">+{userLeaderboardEntry.speedPoints} pts</span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-normal">({userLeaderboardEntry.speedBonusCount}x early bird)</span>
-                      </div>
-                    </div>
-
-                    {/* Visual Bar for Attendance Level */}
-                    <div className="mt-3 space-y-1">
-                      <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="text-slate-600 dark:text-slate-300">Cohort Attendance Level</span>
-                        <span className="text-emerald-700 dark:text-emerald-400">{userLeaderboardEntry.attendanceRate}% ({userLeaderboardEntry.totalAttended}/{userLeaderboardEntry.totalClasses || matchedStudentData.totalCohortClasses || 0})</span>
-                      </div>
-                      <div className="w-full bg-slate-200/80 dark:bg-slate-700 rounded-full h-2 overflow-hidden shadow-inner">
-                        <div
-                          className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.min(100, userLeaderboardEntry.attendanceRate)}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        Previous Classes Attended: <strong className="text-slate-900 dark:text-white">{matchedStudentData.totalAttended ?? 0}</strong>
-                      </span>
-                    </div>
-                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
-                      {matchedStudentData.attendanceRate ?? 100}% Rate
-                    </span>
-                  </div>
                 )}
               </div>
             )}
 
-            {/* STEP 2: SECRET ATTENDANCE WORD / CODE INPUT */}
-            <div className="pt-2 border-t border-slate-200/80 dark:border-slate-800 space-y-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                  <span>Step 2: Enter Today&apos;s Secret Class Attendance Code <span className="text-rose-500">*</span></span>
-                </label>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Sent by facilitator during class
-                </span>
-              </div>
+            {/* SECRET ATTENDANCE CODE INPUT */}
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+              <label className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <KeyRound className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span>Class Attendance Code <span className="text-rose-500">*</span></span>
+              </label>
 
               <div className="relative">
                 <input
                   type="text"
                   required
-                  disabled={isWindowElapsed || isWindowNotStarted}
+                  disabled={isWindowElapsed || isWindowNotStarted || isClassOver24Hours}
                   placeholder={
-                    isWindowElapsed 
-                      ? "Attendance window elapsed - Submissions closed" 
+                    isClassOver24Hours
+                      ? "Attendance is currently closed"
+                      : isWindowElapsed 
+                      ? "Submissions closed" 
                       : isWindowNotStarted
-                      ? `Attendance opens at ${activeClass?.attendanceStartTime ? new Date(activeClass.attendanceStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'scheduled time'}`
-                      : "Type secret word (e.g. CATALYST, VELOCITY, DREAMER)"
+                      ? "Unlocks when session starts"
+                      : "Enter secret code"
                   }
                   value={code}
                   onChange={(e) => handleCodeChange(e.target.value)}
-                  className={`w-full border-2 rounded-2xl px-4 py-4 text-lg sm:text-2xl font-mono font-black tracking-widest text-center transition-all uppercase ${
-                    isWindowElapsed || isWindowNotStarted
+                  className={`w-full border-2 rounded-2xl px-4 py-3.5 text-lg sm:text-xl font-mono font-black tracking-widest text-center transition-all uppercase ${
+                    isWindowElapsed || isWindowNotStarted || isClassOver24Hours
                       ? 'bg-slate-100 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
-                      : 'bg-slate-50 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500'
+                      : 'bg-slate-50 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500'
                   }`}
                 />
               </div>
@@ -874,7 +803,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               </label>
               <input
                 type="text"
-                disabled={isWindowElapsed || isWindowNotStarted}
+                disabled={isWindowElapsed || isWindowNotStarted || isClassOver24Hours}
                 placeholder="e.g. Understood today's full stack architecture!"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
@@ -885,9 +814,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             {/* MARK ATTENDANCE BUTTON */}
             <button
               type="submit"
-              disabled={isSubmitting || !matchedStudentData?.student || !code.trim() || isWindowElapsed || isWindowNotStarted}
+              disabled={isSubmitting || !matchedStudentData?.student || !code.trim() || isWindowElapsed || isWindowNotStarted || isClassOver24Hours}
               className={`w-full py-4 sm:py-5 rounded-2xl font-black text-base sm:text-lg transition-all flex items-center justify-center gap-2.5 ${
-                isWindowElapsed || isWindowNotStarted
+                isWindowElapsed || isWindowNotStarted || isClassOver24Hours
                   ? 'bg-slate-300 text-slate-600 cursor-not-allowed border border-slate-400/50'
                   : 'bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-600 hover:from-violet-700 hover:to-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-xl shadow-indigo-600/25 cursor-pointer hover:scale-[1.01]'
               }`}
@@ -896,6 +825,11 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
                   <span>Validating Code &amp; Marking Attendance...</span>
+                </>
+              ) : isClassOver24Hours ? (
+                <>
+                  <Lock className="w-5 h-5 text-slate-500" />
+                  <span>Attendance Closed &bull; Check Upcoming Schedule</span>
                 </>
               ) : isWindowElapsed ? (
                 <>
@@ -921,46 +855,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         </div>
       )}
 
-          {/* READING CHALLENGE SHORTCUT APP CARD */}
-          <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-xl shadow-slate-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center flex-shrink-0 text-white border border-white/15 shadow-inner">
-                <BookOpen className="w-6 h-6 text-amber-300" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
-                    Daily Reading Challenge
-                  </span>
-                  <span className="text-[10px] font-black bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full">
-                    +10 Pts / Check-in
-                  </span>
-                </div>
-                <h4 className="text-base sm:text-lg font-black text-white leading-snug">
-                  {activeBook ? `${activeBook.title} by ${activeBook.author}` : 'Reading Challenge: Standby'}
-                </h4>
-                <p className="text-xs text-slate-300 font-medium mt-0.5">
-                  {activeBook
-                    ? `Target: ${activeBook.pagesPerDay} pages/day • Read, submit what you learned & claim 10 Greatness points.`
-                    : 'The cohort reading book will be uploaded by the facilitators when it is time.'}
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                setHomeTab('reading');
-                window.scrollTo({ top: 120, behavior: 'smooth' });
-              }}
-              className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-indigo-950 font-black text-xs sm:text-sm transition-all shadow-md cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
-            >
-              <span>{activeBook ? 'Check-in Book Reading' : 'View Reading Section'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
           {/* UPCOMING CLASSES SCHEDULE & PREPARATION */}
-          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+          <div className="pt-2">
             <UpcomingClassesSection
               classes={allCohortClasses}
               cohort={currentCohort}
@@ -968,20 +864,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               onSelectClassForAttendance={(cls) => {
                 setSelectedClassId(cls.id);
                 setCode(cls.code);
-                window.scrollTo({ top: 120, behavior: 'smooth' });
-              }}
-            />
-          </div>
-
-          {/* THE GREATNESS RANK & CONSISTENCY LEADERBOARD */}
-          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <GreatnessLeaderboard
-              entries={leaderboardEntries}
-              cohortName={currentCohort?.name || 'Cohort 2'}
-              userEmail={emailInput || currentUser?.email || ''}
-              onSelectStudentEmail={(selectedEmail) => {
-                setEmailInput(selectedEmail);
-                handleLookupStudent(selectedEmail);
                 window.scrollTo({ top: 120, behavior: 'smooth' });
               }}
             />

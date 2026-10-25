@@ -51,14 +51,14 @@ export const UpcomingClassesSection: React.FC<UpcomingClassesSectionProps> = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-            <span>Upcoming Classes &amp; Masterclass Schedule</span>
+          <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+            <span>Upcoming Classes</span>
           </h3>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
             {isAdminView 
-              ? 'Preview scheduled sessions and dispatch instant reminder broadcasts to cohort members.' 
-              : 'Stay up to date with scheduled classes, check attendance windows, and prepare ahead of live sessions.'}
+              ? 'Scheduled sessions and member reminders' 
+              : 'Class schedule and attendance times'}
           </p>
         </div>
 

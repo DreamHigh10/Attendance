@@ -3,9 +3,7 @@ import {
   CheckCircle2, 
   ShieldCheck, 
   Layers, 
-  LogOut,
-  Radio,
-  Trophy
+  LogOut 
 } from 'lucide-react';
 import { Cohort } from '../types';
 import { DreamTeamLogo } from './common/DreamTeamLogo';
@@ -68,32 +66,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </option>
                 ))}
               </select>
-              {activeClassCount > 0 && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
-                  Live
-                </span>
-              )}
             </div>
 
-            {/* Greatness Rank Leaderboard Quick Button */}
-            <button
-              onClick={() => {
-                if (currentView !== 'student') onViewChange('student');
-                if (onScrollToLeaderboard) {
-                  onScrollToLeaderboard();
-                } else {
-                  const el = document.getElementById('greatness-leaderboard');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              title="View Greatness Rank Leaderboard"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs font-black transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              <span className="hidden sm:inline">Greatness Rank</span>
-              <span className="sm:hidden font-bold">Rank</span>
-            </button>
 
             {/* Google / Account Status */}
             {currentUser ? (

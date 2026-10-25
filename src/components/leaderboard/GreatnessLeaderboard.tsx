@@ -64,45 +64,39 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
       <div className="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-r from-amber-400 via-indigo-600 to-emerald-500" />
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80 dark:border-slate-800">
-        <div className="flex items-start sm:items-center gap-3.5">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/25 flex-shrink-0">
-            <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/25 flex-shrink-0">
+            <Trophy className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-800">
-                Official Leaderboard
-              </span>
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                {cohortName} Consistency Standings
-              </span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 mt-0.5">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>The Greatness Rank</span>
-              <Sparkles className="w-5 h-5 text-amber-500 fill-amber-400" />
+              <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
             </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {cohortName} Standings &bull; {entries.length} Members
+            </p>
           </div>
         </div>
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* How points are calculated button */}
           <button
             onClick={() => setIsPointsModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs font-bold transition-all hover:scale-[1.02] cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs font-bold transition-all cursor-pointer shadow-2xs"
           >
-            <HelpCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-            <span>How Points Are Awarded?</span>
+            <HelpCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>Points Info</span>
           </button>
 
           {/* Filter toggle */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
             <button
               onClick={() => setFilterMode('all')}
-              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                 filterMode === 'all'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -110,9 +104,9 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
             </button>
             <button
               onClick={() => setFilterMode('top10')}
-              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                 filterMode === 'top10'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -122,61 +116,39 @@ export const GreatnessLeaderboard: React.FC<GreatnessLeaderboardProps> = ({
         </div>
       </div>
 
-      {/* PERSONAL RANK CALLOUT: Shown prominently when user email is supplied or detected */}
+      {/* PERSONAL RANK CALLOUT */}
       {currentUserEntry && (
-        <div className="my-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/20 relative overflow-hidden animate-fade-in">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none transform translate-x-16 -translate-y-16" />
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-xl text-white border border-white/30 shadow-inner">
+        <div className="my-5 p-4 rounded-2xl bg-indigo-600 text-white shadow-md relative overflow-hidden animate-fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-lg text-white border border-white/20">
                 #{currentUserEntry.rank}
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full border border-white/20">
-                    Your Greatness Rank
-                  </span>
-                  <span className="text-xs text-indigo-100">
-                    {currentUserEntry.email}
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-black text-white">
+                <h3 className="text-base sm:text-lg font-black text-white">
                   {currentUserEntry.name}
                 </h3>
+                <p className="text-xs text-indigo-200">
+                  {currentUserEntry.email}
+                </p>
               </div>
             </div>
 
             {/* User Stat Pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 text-center">
-                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Total Points</span>
-                <span className="text-lg font-black text-white">{currentUserEntry.totalPoints} pts</span>
+            <div className="flex items-center gap-2">
+              <div className="bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-center">
+                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Points</span>
+                <span className="text-base font-black text-white">{currentUserEntry.totalPoints}</span>
               </div>
-              <div className="bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 text-center">
-                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Classes Attended</span>
-                <span className="text-lg font-black text-white">{currentUserEntry.totalAttended}</span>
+              <div className="bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-center">
+                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Attended</span>
+                <span className="text-base font-black text-white">{currentUserEntry.totalAttended}</span>
               </div>
-              <div className="bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 text-center">
-                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Attendance Rate</span>
-                <span className="text-lg font-black text-emerald-300">{currentUserEntry.attendanceRate}%</span>
+              <div className="bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-center">
+                <span className="text-[10px] text-indigo-100 block uppercase font-bold">Rate</span>
+                <span className="text-base font-black text-emerald-300">{currentUserEntry.attendanceRate}%</span>
               </div>
             </div>
-          </div>
-
-          {/* Sub-breakdown badges */}
-          <div className="mt-3 pt-3 border-t border-white/15 flex flex-wrap items-center gap-3 text-xs text-indigo-100">
-            <span className="flex items-center gap-1 font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" /> Attendance: {currentUserEntry.attendancePoints} pts ({currentUserEntry.totalAttended} classes)
-            </span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1 font-semibold">
-              <MessageSquare className="w-3.5 h-3.5 text-sky-300" /> Comments: {currentUserEntry.commentPoints} pts ({currentUserEntry.commentsCount} comments)
-            </span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1 font-semibold">
-              <Zap className="w-3.5 h-3.5 text-amber-300" /> Speed Bonus: {currentUserEntry.speedPoints} pts ({currentUserEntry.speedBonusCount} times in first 5)
-            </span>
           </div>
         </div>
       )}

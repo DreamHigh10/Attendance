@@ -9,8 +9,11 @@ import { persistentStore } from './services/storage';
 import { ArchitecturalBackground } from './components/common/ArchitecturalBackground';
 import { GoogleAuthModal } from './components/common/GoogleAuthModal';
 import { parseCurrentRoute, navigateTo, AppView, AdminTab } from './utils/navigation';
-import { RefreshCw, GraduationCap, Sparkles } from 'lucide-react';
+import { RefreshCw, GraduationCap, Sparkles, ArrowLeftRight } from 'lucide-react';
 import { DreamTeamLogo } from './components/common/DreamTeamLogo';
+import { WelcomeScreen, WelcomeAction } from './components/welcome/WelcomeScreen';
+import { StudentTabType } from './components/common/StudentBottomNav';
+import { isAuthorizedAdmin } from './constants/admins';
 
 export default function App() {
   const initialRoute = parseCurrentRoute();
@@ -28,6 +31,18 @@ export default function App() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
+
+  // Welcome page entrance state
+  const [hasEntered, setHasEntered] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('dtp_has_entered') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Track which tab to open on student portal when navigating from welcome popup
+  const [studentInitialTab, setStudentInitialTab] = useState<StudentTabType>('class');
 
   // Authenticated user state
   const [currentUser, setCurrentUser] = useState<{ email: string; name: string; photoURL?: string; isGoogleAuth?: boolean } | null>(null);
@@ -170,6 +185,46 @@ export default function App() {
     setIsGoogleModalOpen(false);
   };
 
+  const handleStudentContinue = (email: string, name: string, action: WelcomeAction) => {
+    setCurrentUser({
+      email,
+      name,
+      isGoogleAuth: false,
+    });
+    localStorage.setItem('dtp_student_email', email);
+    try {
+      sessionStorage.setItem('dtp_has_entered', 'true');
+    } catch {}
+
+    if (action === 'attendance') {
+      setStudentInitialTab('class');
+    } else if (action === 'leaderboard') {
+      setStudentInitialTab('leaderboard');
+    } else if (action === 'reading') {
+      setStudentInitialTab('reading');
+    }
+
+    setCurrentView('student');
+    setHasEntered(true);
+    navigateTo('student', undefined, selectedCohortId);
+  };
+
+  const handleAdminContinue = (email: string, name: string) => {
+    setCurrentUser({
+      email,
+      name,
+      isGoogleAuth: true,
+    });
+    localStorage.setItem('dtp_student_email', email);
+    try {
+      sessionStorage.setItem('dtp_has_entered', 'true');
+    } catch {}
+
+    setCurrentView('admin');
+    setHasEntered(true);
+    navigateTo('admin', adminTab, selectedCohortId);
+  };
+
   const handleSignOut = async () => {
     try {
       await firebaseAuth.signOut();
@@ -178,6 +233,10 @@ export default function App() {
     }
     setCurrentUser(null);
     localStorage.removeItem('dtp_student_email');
+    try {
+      sessionStorage.removeItem('dtp_has_entered');
+    } catch {}
+    setHasEntered(false);
   };
 
   const activeClasses = classes.filter((c) => c.isAttendanceOpen);
@@ -204,6 +263,19 @@ export default function App() {
           </p>
         </div>
       </div>
+    );
+  }
+
+  // 1. WELCOME SCREEN: If user hasn't entered their email yet, present the Welcome Screen
+  if (!hasEntered) {
+    return (
+      <WelcomeScreen
+        registeredStudents={students}
+        onStudentContinue={handleStudentContinue}
+        onAdminContinue={handleAdminContinue}
+        onGoogleSignIn={handleGoogleSignIn}
+        isSigningIn={isSigningIn}
+      />
     );
   }
 
@@ -241,6 +313,7 @@ export default function App() {
             books={books}
             bookAttendanceRecords={bookAttendanceRecords}
             onRefreshBooks={loadData}
+            initialTab={studentInitialTab}
           />
         ) : (
           <AdminDashboard
@@ -266,7 +339,39 @@ export default function App() {
         )}
       </main>
 
-      {/* Google Sign-in Modal Fallback (No confidential admin emails prefilled) */}
+      {/* PROMINENT SWITCH BUTTON BELOW THE WEBSITE */}
+      <aside aria-label="Portal Switcher" className="w-full max-w-xl mx-auto px-4 py-4 text-center">
+        <div className="bg-white/95 dark:bg-[#0f1422]/95 backdrop-blur-xl border-2 border-indigo-200/90 dark:border-indigo-900/80 rounded-3xl p-3 sm:p-3.5 shadow-xl shadow-indigo-950/10 flex flex-col sm:flex-row items-center justify-between gap-3 transition-colors">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <span className={`w-2.5 h-2.5 rounded-full ${currentView === 'admin' ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse`} />
+            <span>
+              Viewing: <strong className="text-slate-900 dark:text-white font-black">{currentView === 'admin' ? 'Admin Hub' : 'Student Attendance'}</strong>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => handleViewChange(currentView === 'admin' ? 'student' : 'admin')}
+              className="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-[0.98] text-white font-black text-xs shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5" />
+              <span>Switch to {currentView === 'admin' ? 'Student View' : 'Admin Hub'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSignOut}
+              title="Return to Welcome Screen"
+              className="px-3 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs transition-colors cursor-pointer"
+            >
+              Switch User
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Google Sign-in Modal Fallback */}
       <GoogleAuthModal
         isOpen={isGoogleModalOpen}
         onClose={() => setIsGoogleModalOpen(false)}
@@ -289,10 +394,10 @@ export default function App() {
             </span>
             <span className="text-slate-300 dark:text-slate-700">|</span>
             <button
-              onClick={() => setCurrentView(currentView === 'student' ? 'admin' : 'student')}
+              onClick={() => handleViewChange(currentView === 'student' ? 'admin' : 'student')}
               className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-black underline cursor-pointer"
             >
-              Switch to {currentView === 'student' ? 'Admin Command Center' : 'Mark Attendance View'}
+              Switch to {currentView === 'student' ? 'Admin Hub' : 'Student View'}
             </button>
           </div>
         </div>

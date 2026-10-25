@@ -121,11 +121,8 @@ export const DreamTeamLogo: React.FC<DreamTeamLogoProps> = ({
       {/* Typography from Logo */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`font-black tracking-[0.18em] uppercase font-sans text-slate-900 leading-none ${currentSize.text}`}>
+          <span className={`font-black tracking-[0.18em] uppercase font-sans text-slate-900 dark:text-white leading-none ${currentSize.text}`}>
             THE DREAM TEAM
-          </span>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 mt-0.5">
-            Cohort System
           </span>
         </div>
       )}

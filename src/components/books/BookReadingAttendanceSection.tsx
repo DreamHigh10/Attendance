@@ -46,7 +46,7 @@ const DEFAULT_COHORT_BOOK: BookAssignment = {
   cohortId: 'dtp-cohort-2',
   title: 'Cohort 2 Reading Challenge',
   author: 'Cohort Leadership & Innovation Masterwork',
-  description: 'Weekly cohort reading assignment. Read your assigned chapters daily, extract practical takeaways on innovative thinking, discipline, and execution, and submit your mandatory review below to mark your reading attendance and earn +10 Greatness points.',
+  description: 'Weekly cohort reading assignment. Read daily, submit what you learned, and claim +10 Greatness points.',
   pagesPerDay: 15,
   totalPages: 320,
   startDate: '2026-10-10',
@@ -330,75 +330,47 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
             )}
 
             {/* Reading Pacing & Timelines Stats Card */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-5 text-center">
-              <div className="bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-violet-100 dark:border-slate-700 shadow-2xs">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-0.5">Pages / Day</span>
-                <span className="text-lg font-black text-violet-700 dark:text-violet-400">{activeBook.pagesPerDay || 15}</span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">pages daily</span>
+            <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+              <div className="bg-slate-50 dark:bg-slate-800/70 p-2.5 rounded-2xl border border-violet-100 dark:border-slate-700 shadow-2xs">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-0.5">Pacing</span>
+                <span className="text-base font-black text-violet-700 dark:text-violet-400">{activeBook.pagesPerDay || 15}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">pages/day</span>
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-violet-100 dark:border-slate-700 shadow-2xs">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-0.5">Total Pages</span>
-                <span className="text-lg font-black text-indigo-700 dark:text-indigo-400">{activeBook.totalPages || 320}</span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">complete volume</span>
+              <div className="bg-slate-50 dark:bg-slate-800/70 p-2.5 rounded-2xl border border-violet-100 dark:border-slate-700 shadow-2xs">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-0.5">Length</span>
+                <span className="text-base font-black text-indigo-700 dark:text-indigo-400">{activeBook.totalPages || 320}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">pages total</span>
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-800/70 p-3 rounded-2xl border border-amber-100 dark:border-slate-700 shadow-2xs col-span-2 sm:col-span-1">
+              <div className="bg-slate-50 dark:bg-slate-800/70 p-2.5 rounded-2xl border border-amber-100 dark:border-slate-700 shadow-2xs">
                 <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-0.5">Reviews</span>
-                <span className="text-lg font-black text-amber-600 dark:text-amber-400">{currentBookRecords.length}</span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">logged reviews</span>
+                <span className="text-base font-black text-amber-600 dark:text-amber-400">{currentBookRecords.length}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block">submitted</span>
               </div>
             </div>
 
             {/* Reading Schedule Dates */}
-            <div className="space-y-2 mb-5 text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
-              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200/60 dark:border-slate-700">
-                <span className="font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> Start Date:
-                </span>
-                <strong className="text-slate-800 dark:text-white">{activeBook.startDate || 'October 2026'}</strong>
-              </div>
-              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200/60 dark:border-slate-700">
-                <span className="font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> Stop Target:
-                </span>
-                <strong className="text-slate-800 dark:text-white">{activeBook.stopDate || 'November 2026'}</strong>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-rose-500" /> Final Deadline:
-                </span>
-                <strong className="text-rose-700 dark:text-rose-300 font-black">{activeBook.deadline || 'Cohort Finale'}</strong>
-              </div>
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-700 mb-4">
+              <span className="flex items-center gap-1.5 font-medium">
+                <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                {activeBook.startDate} &ndash; {activeBook.stopDate}
+              </span>
+              <span className="font-bold text-rose-600 dark:text-rose-400">
+                Deadline: {activeBook.deadline || 'Cohort Finale'}
+              </span>
             </div>
 
             {/* Download Book CTA Button */}
             <button
               type="button"
               onClick={() => handleDownloadBook(activeBook)}
-              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-700 hover:to-indigo-800 text-white font-black text-xs sm:text-sm shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2.5 transition-all hover:scale-[1.01] cursor-pointer"
+              className="w-full py-3 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Download className="w-4 h-4 text-white" />
-              <span>Download Reader Study Guide ({activeBook.fileType ? activeBook.fileType.toUpperCase() : 'PDF'})</span>
+              <span>Download Study Guide ({activeBook.fileType ? activeBook.fileType.toUpperCase() : 'PDF'})</span>
             </button>
 
-            {activeBook.fileName && (
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-2 font-mono">
-                Source File: {activeBook.fileName}
-              </p>
-            )}
-
-          </div>
-
-          {/* Guidelines Callout */}
-          <div className="bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800 rounded-2xl p-4 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 shadow-2xs">
-            <div className="flex items-center gap-1.5 font-black text-amber-800 dark:text-amber-300">
-              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>Reading Challenge Policy &bull; 10 Points Award</span>
-            </div>
-            <p className="text-amber-800/90 dark:text-amber-300/90 leading-relaxed text-[11px]">
-              Only enrolled cohort members can mark reading attendance. Submitting a substantive review of what you learned is mandatory to claim your +10 Greatness points.
-            </p>
           </div>
         </div>
 
@@ -406,28 +378,26 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
         <div className="lg:col-span-7 space-y-5">
           <div className="bg-white dark:bg-[#0f1422] border-2 border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative backdrop-blur-md transition-colors">
             
-            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                  Daily Check-in
-                </span>
-                <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mt-1">
-                  Submit Your Book Review &amp; Attendance
+                <h4 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                  Daily Reading Check-in
                 </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Read assigned pages &bull; Submit your review
+                </p>
               </div>
-              <div className="text-right">
-                <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-1 rounded-xl border border-indigo-200 dark:border-indigo-800">
-                  +10 Points
-                </span>
-              </div>
+              <span className="text-xs font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                +10 Points
+              </span>
             </div>
 
             {/* Notice if already marked today */}
             {userMarkedToday && (
-              <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-2.5 animate-fade-in font-medium">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+              <div className="mb-4 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs flex items-center gap-2 animate-fade-in font-medium">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                 <span>
-                  <strong>Already Marked Today:</strong> You have logged today's reading check-in for <em>{activeBook.title}</em>. You can update your review or submit additional reflections below.
+                  Today&apos;s check-in recorded for <em>{activeBook.title}</em>. You can submit another reflection below.
                 </span>
               </div>
             )}
@@ -450,11 +420,10 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
 
             <form onSubmit={handleMarkAttendance} className="space-y-4 text-left">
               
-              {/* STEP 1: Student Email Input */}
+              {/* Student Email Input */}
               <div>
-                <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                  <span>Registered Cohort Email <span className="text-rose-500">*</span></span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Must match roster</span>
+                <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">
+                  Registered Email <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -466,22 +435,22 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
                       setEmailInput(e.target.value);
                       if (onEmailChange) onEmailChange(e.target.value);
                     }}
-                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-violet-600 dark:focus:border-violet-500 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-950/50 rounded-2xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all pl-10"
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all pl-10"
                   />
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 </div>
 
                 {cleanEmail && (
-                  <div className="mt-1.5 text-[11px]">
+                  <div className="mt-1 text-[11px]">
                     {isAuthorized ? (
                       <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                        Verified: {studentDisplayName} ({cohort?.name || 'Cohort Member'})
+                        Verified: {studentDisplayName}
                       </span>
                     ) : (
                       <span className="text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
-                        Not on roster. Only registered cohort members can mark book attendance.
+                        Email not on cohort roster.
                       </span>
                     )}
                   </div>
@@ -500,16 +469,16 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
                     max={activeBook.totalPages || 1000}
                     value={pagesRead}
                     onChange={(e) => setPagesRead(Number(e.target.value))}
-                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-violet-600 dark:focus:border-violet-500 rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white"
+                    className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white"
                   />
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 block">
-                    Target: {activeBook.pagesPerDay || 15} pages / day
+                    Target: {activeBook.pagesPerDay || 15} pages/day
                   </span>
                 </div>
 
                 <div>
                   <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">
-                    Today's Reading Rating
+                    Rating
                   </label>
                   <div className="flex items-center gap-1.5 pt-1.5">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -528,37 +497,36 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
                 </div>
               </div>
 
-              {/* MANDATORY REVIEW: What did you learn from the book? */}
+              {/* MANDATORY REVIEW */}
               <div>
-                <label className="block text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <label className="block text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider mb-1 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
-                    What Did You Learn Today? <span className="text-rose-500">* (Mandatory Review)</span>
+                    <FileText className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    What Did You Learn Today? <span className="text-rose-500">*</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Minimum 10 words</span>
                 </label>
                 <textarea
                   required
-                  rows={4}
-                  placeholder={`Write your detailed review on what you learnt from "${activeBook.title}" today. E.g. "I explored key principles on discipline, relentless execution, creative engineering, and how daily incremental gains compound over time..."`}
+                  rows={3}
+                  placeholder={`Write your key learnings and takeaways from "${activeBook.title}"...`}
                   value={review}
                   onChange={(e) => setReview(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-violet-600 dark:focus:border-violet-500 focus:ring-4 focus:ring-violet-100 dark:focus:ring-violet-950/50 rounded-2xl p-3.5 text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all resize-y"
+                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl p-3.5 text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all resize-y"
                 />
               </div>
 
-              {/* Optional 1-Sentence Key Takeaway */}
+              {/* Optional Key Takeaway */}
               <div>
                 <label className="block text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                   <BookmarkCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                  Key One-Sentence Takeaway (Optional)
+                  Key Takeaway (Optional)
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. 'Consistent daily execution is what transforms ambitious visions into reality.'"
+                  placeholder="One main takeaway or personal action item"
                   value={keyTakeaway}
                   onChange={(e) => setKeyTakeaway(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-violet-600 dark:focus:border-violet-500 rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -566,18 +534,18 @@ export const BookReadingAttendanceSection: React.FC<BookReadingAttendanceSection
               <button
                 type="submit"
                 disabled={isSubmitting || !cleanEmail || !review.trim()}
-                className={`w-full py-4 px-6 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
+                className={`w-full py-3.5 px-6 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all ${
                   isSubmitting || !cleanEmail || !review.trim()
-                    ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-500 cursor-not-allowed shadow-none'
-                    : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-indigo-600/30 hover:scale-[1.01] cursor-pointer'
+                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none'
+                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/25 hover:scale-[1.01] cursor-pointer'
                 }`}
               >
                 {isSubmitting ? (
-                  <span>Saving Review &amp; Allotting +10 Points...</span>
+                  <span>Saving Review...</span>
                 ) : (
                   <>
                     <Send className="w-4 h-4 text-white" />
-                    <span>Submit Review &amp; Mark Book Attendance (+10 pts)</span>
+                    <span>Submit Review (+10 pts)</span>
                   </>
                 )}
               </button>

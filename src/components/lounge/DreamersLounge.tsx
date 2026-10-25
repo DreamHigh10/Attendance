@@ -266,62 +266,53 @@ export const DreamersLounge: React.FC<DreamersLoungeProps> = ({
             <Lock className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
           </div>
 
-          <span className="inline-block px-3.5 py-1 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-black rounded-full uppercase tracking-wider mb-2">
-            Restricted Access &bull; Admins &amp; Cohort Members Only
-          </span>
-
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
             The Dreamers Lounge
           </h3>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-1 mb-6 max-w-md mx-auto">
-            Only Dream Team Admins and registered {cohort?.name || 'Cohort 2'} members are authorized to view chat conversations and participate in discussions.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mb-6 max-w-sm mx-auto">
+            Authorized access for Dream Team Admins and registered {cohort?.name || 'Cohort 2'} members.
           </p>
 
           {/* Gating Error Notice */}
           {gateError && (
-            <div className="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs sm:text-sm font-semibold flex items-start gap-3 text-left animate-fade-in">
-              <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <strong className="block font-black mb-0.5">Verification Required</strong>
-                <span>{gateError}</span>
-              </div>
+            <div className="mb-5 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-semibold flex items-center gap-2.5 text-left animate-fade-in">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+              <span>{gateError}</span>
             </div>
           )}
 
           {/* Email Gating Verification Form */}
-          <form onSubmit={handleVerifyEmail} className="space-y-4 max-w-md mx-auto text-left">
+          <form onSubmit={handleVerifyEmail} className="space-y-3.5 max-w-sm mx-auto text-left">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                Enter Your Registered Cohort Email Address
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                Registered Cohort Email
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  placeholder="e.g. member@dreamteam.org"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all"
-                />
-              </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
-                🔒 Access is strictly verified against the official registered cohort roster. Once unlocked, only your <strong>Name</strong> will be visible in the chat.
+              <input
+                type="email"
+                required
+                placeholder="Enter your registered email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 focus:border-indigo-600 dark:focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all"
+              />
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                Verified against roster. Only your name will be displayed in chat.
               </p>
             </div>
 
             <button
               type="submit"
               disabled={isVerifying || !emailInput.trim()}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-600 via-indigo-600 to-emerald-600 hover:from-violet-700 hover:to-emerald-700 disabled:opacity-50 text-white font-black text-sm sm:text-base shadow-xl shadow-indigo-600/25 transition-all hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-sm shadow-md shadow-indigo-600/25 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {isVerifying ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Verifying Membership...</span>
+                  <span>Verifying...</span>
                 </>
               ) : (
                 <>
-                  <span>Enter Dreamers Lounge</span>
+                  <span>Enter Lounge</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
